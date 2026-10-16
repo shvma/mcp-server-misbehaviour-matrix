@@ -1,0 +1,10 @@
+{
+  "decisions": {
+    "demo/reader": {
+      "verdict": "allow",
+      "agents": ["agent-a"],
+      "definition_sha256": "h1",
+      "expires": "2099-01-01T00:00:00Z"
+    }
+  }
+}
