@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Минимальный MCP-клиент: initialize -> initialized -> tools/call через шлюз.
+"""Минимальный MCP-клиент: initialize -> initialized -> tools/call через шлюз. Токен — из env TOKEN.
 Печатает одну строку JSON: http-статус и ответ (или ошибку)."""
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
@@ -10,6 +11,8 @@ URL = sys.argv[1]
 TOOL = sys.argv[2]
 ARGS = json.loads(sys.argv[3])
 HDR = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+if os.environ.get("TOKEN"):
+    HDR["Authorization"] = "Bearer " + os.environ["TOKEN"]
 
 
 def post(obj, session=None):

@@ -1,10 +1,16 @@
 # yaml-language-server: $schema=https://agentgateway.dev/schema/config
 # Стенд. По образцу examples/mcp-authzen из agentgateway v1.6.0.
-# ВРЕМЕННО литералом: agent (личность придёт из токена, jwtAuth).
+# Личность агента: шлюз сам проверяет подпись токена (jwtAuth, strict) и берёт agent из jwt.sub.
 # Хеш определения инструмента шлюз не шлёт: адаптер берёт его у MCP-сервера сам.
 mcp:
   port: 3000
   policies:
+    jwtAuth:
+      mode: strict
+      issuer: stand-idp
+      audiences: [admission-gateway]
+      jwks:
+        file: stand/idp/jwks.json
     extAuthz:
       conditional:
       - condition: has(mcp.tool)
@@ -17,7 +23,7 @@ mcp:
               :method: '"POST"'
             body: |
               {
-                "agent": "stand-agent",
+                "agent": jwt.sub,
                 "tool": {"server": mcp.tool.target, "name": mcp.tool.name},
                 "arguments": mcp.tool.arguments
               }
