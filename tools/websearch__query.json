@@ -1,0 +1,1 @@
+{"name":"query","description":"Поиск в открытом интернете","inputSchema":{"type":"object","required":["q"],"properties":{"q":{"type":"string"}}}}
