@@ -7,8 +7,9 @@ import os
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-TOOL = {"name": "read", "description": "Прочитать заметку по пути",
-        "inputSchema": {"type": "object", "required": ["path"], "properties": {"path": {"type": "string"}}}}
+# Определение инструмента читается из файла: так стенд может «подменить» его на ходу.
+_DEFAULT = os.path.join(os.path.dirname(__file__), "..", "tools", "notes__read.json")
+TOOL = json.load(open(os.environ.get("TOOL_DEF", _DEFAULT), encoding="utf-8"))
 LOG = os.environ.get("CALLS_LOG", "calls.log")
 
 

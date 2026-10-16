@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://agentgateway.dev/schema/config
 # Стенд. По образцу examples/mcp-authzen из agentgateway v1.6.0.
-# ВРЕМЕННО в теле запроса литералами: agent (личность придёт из токена, jwtAuth)
-# и definition_sha256 (живую сверку определения инструмента делает следующий шаг).
+# ВРЕМЕННО литералом: agent (личность придёт из токена, jwtAuth).
+# Хеш определения инструмента шлюз не шлёт: адаптер берёт его у MCP-сервера сам.
 mcp:
   port: 3000
   policies:
@@ -18,7 +18,7 @@ mcp:
             body: |
               {
                 "agent": "stand-agent",
-                "tool": {"server": mcp.tool.target, "name": mcp.tool.name, "definition_sha256": "stand-literal"},
+                "tool": {"server": mcp.tool.target, "name": mcp.tool.name},
                 "arguments": mcp.tool.arguments
               }
             metadata:

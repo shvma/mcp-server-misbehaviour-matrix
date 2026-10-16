@@ -1,0 +1,1 @@
+{"name":"read","description":"Прочитать заметку по пути","inputSchema":{"type":"object","required":["path"],"properties":{"path":{"type":"string"}}}}

@@ -1,38 +1,38 @@
-policy/admission_test.rego:73:
-data.admission_test.test_unknown_tool_denied: PASS (1.492625ms)
-policy/admission_test.rego:83:
-data.admission_test.test_unknown_verdict_fails_closed: PASS (1.567125ms)
-policy/admission_test.rego:123:
-data.admission_test.test_path_inside_allowed: PASS (1.469084ms)
-policy/admission_test.rego:71:
-data.admission_test.test_allow_plain: PASS (2.089208ms)
-policy/admission_test.rego:114:
-data.admission_test.test_recipient_outside_denied: PASS (2.220208ms)
-policy/admission_test.rego:125:
-data.admission_test.test_path_outside_denied: PASS (2.198958ms)
-policy/admission_test.rego:121:
-data.admission_test.test_recipient_missing_denied: PASS (2.249917ms)
-policy/admission_test.rego:127:
-data.admission_test.test_path_missing_denied: PASS (2.331041ms)
-policy/admission_test.rego:119:
-data.admission_test.test_recipient_lookalike_denied: PASS (2.126084ms)
-policy/admission_test.rego:78:
-data.admission_test.test_deny_verdict: PASS (2.221333ms)
-policy/admission_test.rego:112:
-data.admission_test.test_recipient_inside_allowed: PASS (2.419208ms)
-policy/admission_test.rego:108:
-data.admission_test.test_bad_date_fails_closed: PASS (548.25µs)
-policy/admission_test.rego:85:
-data.admission_test.test_other_agent_denied: PASS (2.530084ms)
 policy/admission_test.rego:91:
-data.admission_test.test_missing_agent_denied: PASS (806.75µs)
-policy/admission_test.rego:98:
-data.admission_test.test_missing_hash_denied: PASS (1.20475ms)
-policy/admission_test.rego:110:
-data.admission_test.test_constraints_missing_denied: PASS (881.041µs)
+data.admission_test.test_missing_agent_denied: PASS (1.205458ms)
+policy/admission_test.rego:73:
+data.admission_test.test_unknown_tool_denied: PASS (1.626208ms)
+policy/admission_test.rego:112:
+data.admission_test.test_recipient_inside_allowed: PASS (1.965667ms)
 policy/admission_test.rego:93:
-data.admission_test.test_changed_definition_denied: PASS (1.219ms)
+data.admission_test.test_changed_definition_denied: PASS (1.758542ms)
+policy/admission_test.rego:83:
+data.admission_test.test_unknown_verdict_fails_closed: PASS (2.284708ms)
+policy/admission_test.rego:71:
+data.admission_test.test_allow_plain: PASS (2.438791ms)
+policy/admission_test.rego:110:
+data.admission_test.test_constraints_missing_denied: PASS (2.580125ms)
+policy/admission_test.rego:85:
+data.admission_test.test_other_agent_denied: PASS (2.704333ms)
 policy/admission_test.rego:103:
-data.admission_test.test_expired_denied: PASS (1.149625ms)
+data.admission_test.test_expired_denied: PASS (1.159459ms)
+policy/admission_test.rego:121:
+data.admission_test.test_recipient_missing_denied: PASS (2.734459ms)
+policy/admission_test.rego:108:
+data.admission_test.test_bad_date_fails_closed: PASS (1.129ms)
+policy/admission_test.rego:114:
+data.admission_test.test_recipient_outside_denied: PASS (2.875167ms)
+policy/admission_test.rego:98:
+data.admission_test.test_missing_hash_denied: PASS (2.137375ms)
+policy/admission_test.rego:125:
+data.admission_test.test_path_outside_denied: PASS (415.292µs)
+policy/admission_test.rego:127:
+data.admission_test.test_path_missing_denied: PASS (2.915791ms)
+policy/admission_test.rego:119:
+data.admission_test.test_recipient_lookalike_denied: PASS (1.038084ms)
+policy/admission_test.rego:123:
+data.admission_test.test_path_inside_allowed: PASS (509.958µs)
+policy/admission_test.rego:78:
+data.admission_test.test_deny_verdict: PASS (618.459µs)
 --------------------------------------------------------------------------------
 PASS: 18/18

@@ -2,8 +2,18 @@
   "decisions": {
     "demo/reader": {
       "verdict": "allow",
-      "agents": ["agent-a"],
+      "agents": [
+        "agent-a"
+      ],
       "definition_sha256": "h1",
+      "expires": "2099-01-01T00:00:00Z"
+    },
+    "fake/read": {
+      "verdict": "allow",
+      "agents": [
+        "agent-a"
+      ],
+      "definition_sha256": "3026b8082a56caa297f9c2ce86f890a7ffdd35b55383486ab8ea80c2814b31ae",
       "expires": "2099-01-01T00:00:00Z"
     }
   }

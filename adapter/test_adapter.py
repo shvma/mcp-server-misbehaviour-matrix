@@ -52,6 +52,30 @@ class Flow(BaseHTTPRequestHandler):
         pass
 
 
+class FakeMCP(BaseHTTPRequestHandler):
+    """Поддельный MCP-сервер: отдаёт tools/list с определением из FakeMCP.tool."""
+    tool = None
+
+    def do_POST(self):
+        msg = json.loads(self.rfile.read(int(self.headers.get("Content-Length", "0"))) or b"{}")
+        if msg.get("id") is None:
+            self.send_response(202)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        result = {"tools": [FakeMCP.tool]} if msg.get("method") == "tools/list" else {"protocolVersion": "2025-06-18"}
+        body = json.dumps({"jsonrpc": "2.0", "id": msg["id"], "result": result}).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Mcp-Session-Id", "s1")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, *a):
+        pass
+
+
 class AdapterTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -72,6 +96,9 @@ class AdapterTest(unittest.TestCase):
         cls.flow = ThreadingHTTPServer(("127.0.0.1", 0), Flow)
         threading.Thread(target=cls.flow.serve_forever, daemon=True).start()
         cls.flow_url = f"http://127.0.0.1:{cls.flow.server_address[1]}/check"
+        cls.mcp = ThreadingHTTPServer(("127.0.0.1", 0), FakeMCP)
+        threading.Thread(target=cls.mcp.serve_forever, daemon=True).start()
+        cls.targets = {"fake": f"http://127.0.0.1:{cls.mcp.server_address[1]}/mcp"}
 
     @classmethod
     def tearDownClass(cls):
@@ -79,9 +106,12 @@ class AdapterTest(unittest.TestCase):
         cls.opa.wait(5)
         cls.flow.shutdown()
         cls.flow.server_close()
+        cls.mcp.shutdown()
+        cls.mcp.server_close()
 
     def setUp(self):
         Flow.mode, Flow.calls = "allow", 0
+        FakeMCP.tool = json.loads((HERE / "fixtures/fake_read.json").read_text(encoding="utf-8"))
 
     # --- конфигурация «только OPA» ---
 
@@ -129,6 +159,30 @@ class AdapterTest(unittest.TestCase):
     def test_flow_not_asked_when_pdp_denies(self):
         adapter.decide(call(agent="agent-b"), self.opa_url, self.flow_url)
         self.assertEqual(Flow.calls, 0)
+
+    # --- живая сверка определения инструмента ---
+
+    def test_live_definition_matches(self):
+        c = call(server="fake", name="read", sha="что-угодно-от-шлюза")
+        self.assertEqual(adapter.decide(c, self.opa_url, targets=self.targets), (True, []))
+
+    def test_live_definition_changed(self):
+        FakeMCP.tool = dict(FakeMCP.tool, description="другое описание")
+        c = call(server="fake", name="read")
+        self.assertEqual(adapter.decide(c, self.opa_url, targets=self.targets), (False, ["definition_changed"]))
+
+    def test_tool_missing_from_list(self):
+        c = call(server="fake", name="absent")
+        self.assertEqual(adapter.decide(c, self.opa_url, targets=self.targets), (False, ["definition_unavailable"]))
+
+    def test_unknown_target(self):
+        c = call(server="nowhere", name="read")
+        self.assertEqual(adapter.decide(c, self.opa_url, targets=self.targets), (False, ["definition_unavailable"]))
+
+    def test_mcp_down(self):
+        dead = {"fake": f"http://127.0.0.1:{free_port()}/mcp"}
+        c = call(server="fake", name="read")
+        self.assertEqual(adapter.decide(c, self.opa_url, timeout=0.5, targets=dead), (False, ["definition_unavailable"]))
 
     # --- HTTP целиком, как его увидит шлюз ---
 
