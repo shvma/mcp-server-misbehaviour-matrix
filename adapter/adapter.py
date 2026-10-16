@@ -59,24 +59,29 @@ class Handler(BaseHTTPRequestHandler):
             call = None
         cfg = self.server
         allow, reasons = decide(call, cfg.opa_url, cfg.flow_url, cfg.timeout)
-        body = json.dumps({"allow": allow, "reasons": reasons}, ensure_ascii=False).encode("utf-8")
+        # Причины отказа агенту не отдаём: шлюз пробрасывает тело ответа клиенту, а по модели
+        # угроз агент враждебен — причины рисуют ему карту политики. Причины пишутся в журнал ниже.
+        body = json.dumps({"allow": allow}).encode("utf-8")
         self.send_response(200 if allow else 403)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
         tool = call.get("tool", {}) if isinstance(call, dict) else {}
-        print(json.dumps({"tool": f"{tool.get('server')}/{tool.get('name')}",
-                          "agent": call.get("agent") if isinstance(call, dict) else None,
-                          "allow": allow, "reasons": reasons}, ensure_ascii=False), flush=True)
+        line = {"tool": f"{tool.get('server')}/{tool.get('name')}",
+                "agent": call.get("agent") if isinstance(call, dict) else None,
+                "allow": allow, "reasons": reasons}
+        if cfg.log_input:
+            line["input"] = call  # отладка стенда: аргументы могут быть чувствительными
+        print(json.dumps(line, ensure_ascii=False), flush=True)
 
     def log_message(self, *args):
         pass
 
 
-def make_server(port, opa_url, flow_url="", timeout=2.0):
+def make_server(port, opa_url, flow_url="", timeout=2.0, log_input=False):
     srv = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    srv.opa_url, srv.flow_url, srv.timeout = opa_url, flow_url, timeout
+    srv.opa_url, srv.flow_url, srv.timeout, srv.log_input = opa_url, flow_url, timeout, log_input
     return srv
 
 
@@ -84,6 +89,7 @@ if __name__ == "__main__":
     srv = make_server(int(os.environ.get("PORT", "9191")),
                       os.environ.get("OPA_URL", "http://127.0.0.1:8181/v1/data/admission"),
                       os.environ.get("FLOW_URL", ""),
-                      float(os.environ.get("CHECK_TIMEOUT", "2")))
+                      float(os.environ.get("CHECK_TIMEOUT", "2")),
+                      os.environ.get("ADAPTER_LOG_INPUT") == "1")
     print(f"adapter on 127.0.0.1:{srv.server_address[1]}", file=sys.stderr)
     srv.serve_forever()

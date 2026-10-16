@@ -144,9 +144,9 @@ class AdapterTest(unittest.TestCase):
                         return r.status, json.loads(r.read())
                 except urllib.error.HTTPError as e:
                     return e.code, json.loads(e.read())
-            self.assertEqual(post(json.dumps(call()).encode()), (200, {"allow": True, "reasons": []}))
-            self.assertEqual(post(json.dumps(call(agent="agent-b")).encode())[0], 403)
-            self.assertEqual(post(b"not json"), (403, {"allow": False, "reasons": ["bad_request"]}))
+            self.assertEqual(post(json.dumps(call()).encode()), (200, {"allow": True}))
+            self.assertEqual(post(json.dumps(call(agent="agent-b")).encode()), (403, {"allow": False}))
+            self.assertEqual(post(b"not json"), (403, {"allow": False}))
         finally:
             srv.shutdown()
             srv.server_close()

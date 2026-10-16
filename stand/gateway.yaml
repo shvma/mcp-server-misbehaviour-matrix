@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Стенд. По образцу examples/mcp-authzen из agentgateway v1.6.0.
+# ВРЕМЕННО в теле запроса литералами: agent (личность придёт из токена, jwtAuth)
+# и definition_sha256 (живую сверку определения инструмента делает следующий шаг).
+mcp:
+  port: 3000
+  policies:
+    extAuthz:
+      conditional:
+      - condition: has(mcp.tool)
+        host: localhost:9191
+        protocol:
+          http:
+            path: '"/check"'
+            addRequestHeaders:
+              content-type: '"application/json"'
+              :method: '"POST"'
+            body: |
+              {
+                "agent": "stand-agent",
+                "tool": {"server": mcp.tool.target, "name": mcp.tool.name, "definition_sha256": "stand-literal"},
+                "arguments": mcp.tool.arguments
+              }
+            metadata:
+              decision: json(response.body).allow
+    authorization:
+      rules:
+      - require: '!has(mcp.tool) || extauthz.decision == true'
+  targets:
+  - name: notes
+    mcp:
+      host: http://localhost:3001/mcp

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Одна команда: проверить решения, сгенерировать политику и контракт, прогнать все тесты.
+# Живой стенд со шлюзом запускается отдельно: ./stand/run_stand.sh
 # Сырой вывод тестов: results/opa-test.txt (политика) и results/adapter-test.txt (адаптер).
 set -euo pipefail
 cd "$(dirname "$0")"

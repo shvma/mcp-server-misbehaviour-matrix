@@ -1,0 +1,31 @@
+2026-10-16T14:11:55.965561Z	info	agentgateway_app::commands::run	version: 1.6.0	
+2026-10-16T14:11:55.965984Z	info	management::hyper_helpers	listener established	address=[::]:15021 component="readiness"
+2026-10-16T14:11:55.967918Z	info	state_manager	loaded config from File("stand/gateway.yaml")	
+2026-10-16T14:11:55.970215Z	info	state_manager	Watching config file: stand/gateway.yaml	
+2026-10-16T14:11:55.970484Z	info	agent_core::readiness	Task 'state manager' complete (5.000708ms), still awaiting 1 tasks	
+2026-10-16T14:11:55.970574Z	info	app	serving UI at http://localhost:15000/ui	
+2026-10-16T14:11:55.970581Z	info	agent_core::readiness	Task 'agentgateway' complete (5.097917ms), marking server ready	
+2026-10-16T14:11:55.970586Z	info	management::hyper_helpers	listener established	address=127.0.0.1:15000 component="admin"
+2026-10-16T14:11:55.970590Z	info	management::hyper_helpers	listener established	address=[::1]:15000 component="admin"
+2026-10-16T14:11:55.970615Z	info	proxy::gateway	started bind	bind="bind/3000"
+2026-10-16T14:11:55.970649Z	info	management::hyper_helpers	listener established	address=[::]:15020 component="stats"
+2026-10-16T14:11:56.194882Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57146 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=200 protocol=mcp mcp.method.name=initialize mcp.session.id=2246efe8-f70c-441c-accb-192ac306ecf2 duration=1ms
+2026-10-16T14:11:56.195653Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57148 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=202 protocol=mcp mcp.method.name=notifications/initialized mcp.session.id=eyJ0IjoibWNwIiwicyI6W3sidCI6Im5vdGVzIiwicyI6IjI2MjRhMDVjZDhmNjRmNTBhODVhNjgyYWQzYTQ0ODM0In1dfQ duration=0ms
+2026-10-16T14:11:56.200604Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57150 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=200 protocol=mcp mcp.method.name=tools/call mcp.target=notes mcp.resource.type=tool gen_ai.tool.name=read mcp.session.id=eyJ0IjoibWNwIiwicyI6W3sidCI6Im5vdGVzIiwicyI6IjI2MjRhMDVjZDhmNjRmNTBhODVhNjgyYWQzYTQ0ODM0In1dfQ duration=4ms
+2026-10-16T14:11:56.298553Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57154 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=200 protocol=mcp mcp.method.name=initialize mcp.session.id=1061a17a-2c36-48c4-85cb-e7038d9c281d duration=0ms
+2026-10-16T14:11:56.299230Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57156 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=202 protocol=mcp mcp.method.name=notifications/initialized mcp.session.id=eyJ0IjoibWNwIiwicyI6W3sidCI6Im5vdGVzIiwicyI6IjNhNTAwOWFhNDI4NzQ2ZTQ5YzZmOWFjOWE1ZjY5MzBkIn1dfQ duration=0ms
+2026-10-16T14:11:56.300512Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57158 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=403 protocol=http reason=DirectResponse duration=1ms
+2026-10-16T14:11:56.943881Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57167 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=200 protocol=mcp mcp.method.name=initialize mcp.session.id=0043ab69-4954-40e2-9e95-d0ae41d02b68 duration=0ms
+2026-10-16T14:11:56.944688Z	info	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57169 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=202 protocol=mcp mcp.method.name=notifications/initialized mcp.session.id=eyJ0IjoibWNwIiwicyI6W3sidCI6Im5vdGVzIiwicyI6ImNmZjZhNWIyNTZhNDQyMmJiZWEwMmI2ZTI3YTVjMDFmIn1dfQ duration=0ms
+2026-10-16T14:11:56.945137Z	error	request gateway=default/default listener=mcp route=internal/default src.addr=127.0.0.1:57171 http.method=POST http.host=127.0.0.1 http.path=/mcp http.version=HTTP/1.1 http.status=403 protocol=http error="external authorization failed" reason=ExtAuth duration=0ms
+2026-10-16T14:11:56.984214Z	info	agent_core::signal::imp	received signal SIGTERM, starting shutdown	
+2026-10-16T14:11:56.984238Z	info	management::hyper_helpers	listener drained	address=[::1]:15000 component="admin"
+2026-10-16T14:11:56.984250Z	info	management::hyper_helpers	listener drained	address=[::]:15020 component="stats"
+2026-10-16T14:11:56.984248Z	info	agent_core::drain	drain started, waiting 0ns-5s for any connections to complete	component="bind bind/3000"
+2026-10-16T14:11:56.984256Z	info	proxy::gateway	stop listening for binds; drain started	
+2026-10-16T14:11:56.984263Z	info	management::hyper_helpers	listener drained	address=[::]:15021 component="readiness"
+2026-10-16T14:11:56.984281Z	info	management::hyper_helpers	listener drained	address=127.0.0.1:15000 component="admin"
+2026-10-16T14:11:56.985388Z	info	agent_core::drain	minimum drain completed, no longer accepting new connections, waiting 4.998864208s for any connections to complete	component="bind bind/3000"
+2026-10-16T14:11:56.985412Z	info	agent_core::drain	shutdown complete	component="bind bind/3000"
+2026-10-16T14:11:56.985418Z	info	proxy::gateway	bind complete Ok(Ok(()))	
+2026-10-16T14:11:56.985419Z	info	proxy::gateway	binds drained	
