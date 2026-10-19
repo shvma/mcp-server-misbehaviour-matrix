@@ -46,7 +46,7 @@ kill "$ADAPTER"; sleep 0.5
 run 9-adapter-down       "$GOOD"                                    '{"path":"/public/a"}'
 
 # --- проверки: стенд падает, если поведение не то ---
-python3 - "$OUT" <<'PY'
+python3 - "$OUT" <<'PY' | tee "$OUT/checks.txt"
 import json, sys, pathlib
 out = pathlib.Path(sys.argv[1])
 r = {int(f.name.split("-")[0]): json.loads(f.read_text()) for f in out.glob("[0-9]*-*.json")}
