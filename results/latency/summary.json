@@ -1,0 +1,23 @@
+{
+  "n": 200,
+  "direct": {
+    "median_ms": 0.25,
+    "p95_ms": 0.31,
+    "non_200": 0
+  },
+  "bare_gateway": {
+    "median_ms": 0.38,
+    "p95_ms": 0.48,
+    "non_200": 0
+  },
+  "full_chain": {
+    "median_ms": 1.61,
+    "p95_ms": 2.02,
+    "non_200": 0
+  },
+  "live_definition_check": {
+    "median_ms": 0.66,
+    "p95_ms": 0.86,
+    "non_200": 0
+  }
+}
