@@ -78,3 +78,6 @@ for name, ok in checks:
     print(("PASS " if ok else "FAIL ") + name)
 sys.exit(0 if all(ok for _, ok in checks) else 1)
 PY
+
+# Сводная таблица по сырым трассам (T9).
+python3 stand/metrics.py > /dev/null && echo "метрики: results/metrics.md"
