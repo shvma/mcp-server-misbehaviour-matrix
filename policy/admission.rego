@@ -70,9 +70,26 @@ deny_reasons contains "path_not_allowed" if {
 	not path_allowed(prefix)
 }
 
-path_allowed(prefix) if startswith(input.arguments.path, prefix)
+# Префикс сравнивается со строкой, поэтому сегмент ".." запрещён: иначе путь начинается
+# с разрешённого префикса, а ведёт за его пределы.
+path_allowed(prefix) if {
+	path := input.arguments.path
+	is_string(path)
+	startswith(path, prefix)
+	not has_parent_segment(path)
+}
 
+has_parent_segment(path) if ".." in split(path, "/")
+
+# Ровно один адрес на вызов: один "@", без пробелов, запятых, точек с запятой и угловых скобок.
+# Иначе в одно поле помещается список, и внешний адрес проходит вместе с внутренним.
+# Домен сравнивается целиком: поддомен разрешённого домена не разрешён.
 recipient_allowed(domains) if {
-	some d in domains
-	endswith(input.arguments.to, concat("", ["@", d]))
+	to := input.arguments.to
+	is_string(to)
+	not regex.match(`[\s,;<>"]`, to)
+	parts := split(to, "@")
+	count(parts) == 2
+	parts[0] != ""
+	parts[1] in domains
 }

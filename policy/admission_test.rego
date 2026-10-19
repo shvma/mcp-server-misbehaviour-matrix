@@ -120,8 +120,31 @@ test_recipient_lookalike_denied if not ok(call("demo/sender", "h2", {"to": "ann@
 
 test_recipient_missing_denied if not ok(call("demo/sender", "h2", {}))
 
+# Несколько адресов в одном поле: внутренний адрес в конце не должен проводить внешний.
+test_recipient_comma_list_denied if not ok(call("demo/sender", "h2", {"to": "x@outside.example, ann@corp.example"}))
+
+test_recipient_semicolon_list_denied if not ok(call("demo/sender", "h2", {"to": "x@outside.example;ann@corp.example"}))
+
+test_recipient_not_string_denied if not ok(call("demo/sender", "h2", {"to": ["ann@corp.example"]}))
+
+test_recipient_subdomain_denied if not ok(call("demo/sender", "h2", {"to": "ann@sub.corp.example"}))
+
 test_path_inside_allowed if ok(call("demo/writer", "h3", {"path": "/workspace/notes.txt"}))
 
 test_path_outside_denied if not ok(call("demo/writer", "h3", {"path": "/etc/hosts"}))
 
 test_path_missing_denied if not ok(call("demo/writer", "h3", {}))
+
+# Переход на уровень выше после разрешённого префикса: строка начинается с префикса, а путь ведёт наружу.
+test_path_parent_segment_denied if {
+	inp := call("demo/writer", "h3", {"path": "/workspace/../etc/hosts"})
+	not ok(inp)
+	"path_not_allowed" in reasons(inp)
+}
+
+test_path_trailing_parent_denied if not ok(call("demo/writer", "h3", {"path": "/workspace/.."}))
+
+test_path_not_string_denied if not ok(call("demo/writer", "h3", {"path": ["/workspace/notes.txt"]}))
+
+# Две точки внутри имени файла — не переход наверх, пропускаем.
+test_path_dots_in_name_allowed if ok(call("demo/writer", "h3", {"path": "/workspace/a..b.txt"}))

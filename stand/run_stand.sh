@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Живой стенд: издатель токенов + OPA + учебный MCP-сервер + адаптер + agentgateway.
-# Девять сценариев, в конце автоматические проверки. Сырые логи и ответы: results/stand/.
+# Десять сценариев, в конце автоматические проверки. Сырые логи и ответы: results/stand/.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT=results/stand
@@ -36,6 +36,7 @@ run 4-other-agent        "$(tok stand/idp other-agent)"             '{"path":"/p
 run 5-expired-token      "$(tok stand/idp stand-agent -3600)"       '{"path":"/public/a"}'
 run 6-forged-signature   "$(tok stand/idp-forged stand-agent)"      '{"path":"/public/a"}'
 run 7-wrong-audience     "$(tok stand/idp stand-agent 300 other-gw)" '{"path":"/public/a"}'
+run 10-parent-path       "$GOOD"                                    '{"path":"/public/../private/b"}'
 
 kill "$MCP"; wait "$MCP" 2>/dev/null || true
 CALLS_LOG="$OUT/server-calls.log" TOOL_DEF=stand/notes_read_changed.json python3 stand/mcp_server.py >> "$OUT/mcp.log" 2>&1 & PIDS+=($!)
@@ -48,7 +49,7 @@ run 9-adapter-down       "$GOOD"                                    '{"path":"/p
 python3 - "$OUT" <<'PY'
 import json, sys, pathlib
 out = pathlib.Path(sys.argv[1])
-r = {int(f.name.split("-")[0]): json.loads(f.read_text()) for f in out.glob("[0-9]-*.json")}
+r = {int(f.name.split("-")[0]): json.loads(f.read_text()) for f in out.glob("[0-9]*-*.json")}
 log = [json.loads(l) for l in (out / "adapter.log").read_text().splitlines() if l.startswith("{")]
 calls = [json.loads(l) for l in (out / "server-calls.log").read_text().splitlines()] if (out / "server-calls.log").exists() else []
 checks = [
@@ -62,10 +63,12 @@ checks = [
     ("7: токен для другой аудитории — 401", r[7]["http"] == 401),
     ("8: подменённое определение — 403", r[8]["http"] == 403),
     ("9: адаптер недоступен — 403", r[9]["http"] == 403),
-    ("в адаптер дошли только аутентифицированные вызовы 1, 2, 4, 8",
+    ("10: путь с '..' после разрешённого префикса — 403", r[10]["http"] == 403),
+    ("в адаптер дошли только аутентифицированные вызовы 1, 2, 4, 10, 8",
      [(e["agent"], e["reasons"]) for e in log] ==
      [("stand-agent", []), ("stand-agent", ["path_not_allowed"]),
-      ("other-agent", ["agent_not_admitted"]), ("stand-agent", ["definition_changed"])]),
+      ("other-agent", ["agent_not_admitted"]), ("stand-agent", ["path_not_allowed"]),
+      ("stand-agent", ["definition_changed"])]),
     ("до MCP-сервера дошёл ровно один вызов, разрешённый", [c["arguments"] for c in calls] == [{"path": "/public/a"}]),
 ]
 for name, ok in checks:
