@@ -60,6 +60,16 @@ deny_reasons contains "constraints_missing" if {
 	count(object.get(decision, "constraints", {})) == 0
 }
 
+# Защита самого PDP: constraints с ключом, который политика не умеет исполнять, даёт отказ,
+# а не тихое разрешение без ограничения. Иначе будущий ключ (напр. max_size) = fail-open.
+# Сейчас это также ловит генератор по схеме, но PDP не должен зависеть от того, что вход валиден.
+deny_reasons contains "unknown_constraint" if {
+	decision.verdict == "allow_with_constraints"
+	some k
+	decision.constraints[k]
+	not k in {"recipient_domain_in", "path_prefix"}
+}
+
 deny_reasons contains "recipient_not_allowed" if {
 	domains := decision.constraints.recipient_domain_in
 	not recipient_allowed(domains)
@@ -73,6 +83,7 @@ deny_reasons contains "path_not_allowed" if {
 # Префикс сравнивается со строкой, поэтому сегмент ".." запрещён: иначе путь начинается
 # с разрешённого префикса, а ведёт за его пределы.
 path_allowed(prefix) if {
+	endswith(prefix, "/")
 	path := input.arguments.path
 	is_string(path)
 	startswith(path, prefix)

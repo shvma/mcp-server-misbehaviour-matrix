@@ -1,66 +1,70 @@
-policy/admission_test.rego:73:
-data.admission_test.test_unknown_tool_denied: PASS (4.0625ms)
-policy/admission_test.rego:132:
-data.admission_test.test_path_inside_allowed: PASS (4.017375ms)
-
-build/examples_test.rego:10:
-data.admission_examples_test.test_notes_read_deny_0: PASS (4.333125ms)
-
-policy/admission_test.rego:121:
-data.admission_test.test_recipient_missing_denied: PASS (4.593708ms)
-
-build/examples_test.rego:6:
-data.admission_examples_test.test_notes_read_allow_0: PASS (4.559542ms)
-
-policy/admission_test.rego:83:
-data.admission_test.test_unknown_verdict_fails_closed: PASS (4.705ms)
-policy/admission_test.rego:71:
-data.admission_test.test_allow_plain: PASS (4.668084ms)
-policy/admission_test.rego:150:
-data.admission_test.test_path_dots_in_name_allowed: PASS (5.171667ms)
+policy/admission_test.rego:124:
+data.admission_test.test_constraints_missing_denied: PASS (1.955375ms)
 
 build/examples_test.rego:14:
-data.admission_examples_test.test_notes_read_deny_1: PASS (5.230041ms)
+data.admission_examples_test.test_notes_read_deny_1: PASS (2.246083ms)
 
 policy/admission_test.rego:126:
-data.admission_test.test_recipient_semicolon_list_denied: PASS (5.34775ms)
-policy/admission_test.rego:128:
-data.admission_test.test_recipient_not_string_denied: PASS (1.507875ms)
-policy/admission_test.rego:85:
-data.admission_test.test_other_agent_denied: PASS (5.644291ms)
-policy/admission_test.rego:78:
-data.admission_test.test_deny_verdict: PASS (5.709375ms)
-policy/admission_test.rego:110:
-data.admission_test.test_constraints_missing_denied: PASS (457.916µs)
+data.admission_test.test_recipient_inside_allowed: PASS (2.288917ms)
+policy/admission_test.rego:159:
+data.admission_test.test_path_trailing_parent_denied: PASS (2.007042ms)
+policy/admission_test.rego:144:
+data.admission_test.test_recipient_subdomain_denied: PASS (1.001416ms)
 policy/admission_test.rego:112:
-data.admission_test.test_recipient_inside_allowed: PASS (529.917µs)
-policy/admission_test.rego:91:
-data.admission_test.test_missing_agent_denied: PASS (1.452917ms)
-policy/admission_test.rego:98:
-data.admission_test.test_missing_hash_denied: PASS (1.513292ms)
-policy/admission_test.rego:124:
-data.admission_test.test_recipient_comma_list_denied: PASS (2.202791ms)
-policy/admission_test.rego:130:
-data.admission_test.test_recipient_subdomain_denied: PASS (1.046083ms)
-policy/admission_test.rego:103:
-data.admission_test.test_expired_denied: PASS (1.747792ms)
-policy/admission_test.rego:108:
-data.admission_test.test_bad_date_fails_closed: PASS (2.169083ms)
-policy/admission_test.rego:136:
-data.admission_test.test_path_missing_denied: PASS (739.709µs)
-policy/admission_test.rego:134:
-data.admission_test.test_path_outside_denied: PASS (1.236917ms)
-policy/admission_test.rego:93:
-data.admission_test.test_changed_definition_denied: PASS (2.413875ms)
-policy/admission_test.rego:145:
-data.admission_test.test_path_trailing_parent_denied: PASS (868.875µs)
-policy/admission_test.rego:119:
-data.admission_test.test_recipient_lookalike_denied: PASS (924.625µs)
-policy/admission_test.rego:139:
-data.admission_test.test_path_parent_segment_denied: PASS (1.9095ms)
-policy/admission_test.rego:114:
-data.admission_test.test_recipient_outside_denied: PASS (2.048208ms)
-policy/admission_test.rego:147:
-data.admission_test.test_path_not_string_denied: PASS (974.875µs)
+data.admission_test.test_missing_hash_denied: PASS (1.782417ms)
+policy/admission_test.rego:167:
+data.admission_test.test_path_prefix_without_slash_denied: PASS (2.237542ms)
+policy/admission_test.rego:107:
+data.admission_test.test_changed_definition_denied: PASS (2.705084ms)
+policy/admission_test.rego:99:
+data.admission_test.test_other_agent_denied: PASS (3.190667ms)
+policy/admission_test.rego:161:
+data.admission_test.test_path_not_string_denied: PASS (1.017958ms)
+policy/admission_test.rego:142:
+data.admission_test.test_recipient_not_string_denied: PASS (2.400417ms)
+policy/admission_test.rego:148:
+data.admission_test.test_path_outside_denied: PASS (1.301875ms)
+policy/admission_test.rego:105:
+data.admission_test.test_missing_agent_denied: PASS (3.371291ms)
+policy/admission_test.rego:128:
+data.admission_test.test_recipient_outside_denied: PASS (3.848917ms)
+policy/admission_test.rego:150:
+data.admission_test.test_path_missing_denied: PASS (1.552792ms)
+
+build/examples_test.rego:10:
+data.admission_examples_test.test_notes_read_deny_0: PASS (809.166µs)
+
+policy/admission_test.rego:146:
+data.admission_test.test_path_inside_allowed: PASS (1.844041ms)
+policy/admission_test.rego:135:
+data.admission_test.test_recipient_missing_denied: PASS (1.691125ms)
+policy/admission_test.rego:85:
+data.admission_test.test_allow_plain: PASS (470.042µs)
+policy/admission_test.rego:87:
+data.admission_test.test_unknown_tool_denied: PASS (314.334µs)
+policy/admission_test.rego:133:
+data.admission_test.test_recipient_lookalike_denied: PASS (1.238708ms)
+policy/admission_test.rego:173:
+data.admission_test.test_unknown_constraint_denied: PASS (1.167375ms)
+policy/admission_test.rego:117:
+data.admission_test.test_expired_denied: PASS (1.364917ms)
+policy/admission_test.rego:122:
+data.admission_test.test_bad_date_fails_closed: PASS (1.132041ms)
+policy/admission_test.rego:153:
+data.admission_test.test_path_parent_segment_denied: PASS (2.472875ms)
+policy/admission_test.rego:140:
+data.admission_test.test_recipient_semicolon_list_denied: PASS (861.25µs)
+policy/admission_test.rego:138:
+data.admission_test.test_recipient_comma_list_denied: PASS (1.067417ms)
+policy/admission_test.rego:97:
+data.admission_test.test_unknown_verdict_fails_closed: PASS (1.005166ms)
+
+build/examples_test.rego:6:
+data.admission_examples_test.test_notes_read_allow_0: PASS (1.024875ms)
+
+policy/admission_test.rego:164:
+data.admission_test.test_path_dots_in_name_allowed: PASS (1.1565ms)
+policy/admission_test.rego:92:
+data.admission_test.test_deny_verdict: PASS (1.66725ms)
 --------------------------------------------------------------------------------
-PASS: 29/29
+PASS: 31/31

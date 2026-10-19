@@ -54,6 +54,20 @@ fixture := {
 		"definition_sha256": "h8",
 		"expires": "2099-01-01T00:00:00Z",
 	},
+	"demo/badprefix": {
+		"verdict": "allow_with_constraints",
+		"agents": ["agent-a"],
+		"definition_sha256": "h9",
+		"expires": "2099-01-01T00:00:00Z",
+		"constraints": {"path_prefix": "/workspace"},
+	},
+	"demo/unkconstraint": {
+		"verdict": "allow_with_constraints",
+		"agents": ["agent-a"],
+		"definition_sha256": "h10",
+		"expires": "2099-01-01T00:00:00Z",
+		"constraints": {"max_size": 10},
+	},
 }
 
 call(server_name, hash, args) := {
@@ -148,3 +162,15 @@ test_path_not_string_denied if not ok(call("demo/writer", "h3", {"path": ["/work
 
 # Две точки внутри имени файла — не переход наверх, пропускаем.
 test_path_dots_in_name_allowed if ok(call("demo/writer", "h3", {"path": "/workspace/a..b.txt"}))
+
+# Защита PDP: префикс пути без завершающего "/" не должен проходить (иначе /public допустил бы /public-secret).
+test_path_prefix_without_slash_denied if {
+	not ok(call("demo/badprefix", "h9", {"path": "/workspace/notes.txt"}))
+	"path_not_allowed" in reasons(call("demo/badprefix", "h9", {"path": "/workspace/notes.txt"}))
+}
+
+# Защита PDP: нераспознанный ключ constraints даёт отказ, а не разрешение без ограничения.
+test_unknown_constraint_denied if {
+	not ok(call("demo/unkconstraint", "h10", {}))
+	"unknown_constraint" in reasons(call("demo/unkconstraint", "h10", {}))
+}
