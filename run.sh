@@ -9,3 +9,5 @@ python3 gen/generate.py
 "$OPA" fmt --list --fail policy build || { echo "Rego не отформатирован: $OPA fmt -w policy" >&2; exit 1; }
 "$OPA" test policy build -v 2>&1 | tee results/opa-test.txt
 (cd adapter && python3 -W error::ResourceWarning -m unittest -v test_adapter) 2>&1 | tee results/adapter-test.txt
+# Регрессия: правка решения в git ломает тест (T10).
+./scripts/mutation_check.sh 2>&1 | tee results/mutation-check.txt

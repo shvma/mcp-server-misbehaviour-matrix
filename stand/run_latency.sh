@@ -14,7 +14,8 @@ trap cleanup EXIT
 wait_port(){ for _ in $(seq 100); do nc -z 127.0.0.1 "$1" 2>/dev/null && return 0; sleep 0.1; done; echo "порт $1 не поднялся" >&2; exit 1; }
 
 rm -rf stand/idp; python3 stand/idp.py keygen stand/idp
-"$OPA" run --server --addr 127.0.0.1:8181 policy/admission.rego stand/data.json > /dev/null 2>&1 & PIDS+=($!)
+python3 gen/generate.py >/dev/null
+"$OPA" run --server --addr 127.0.0.1:8181 policy/admission.rego build/data.json > /dev/null 2>&1 & PIDS+=($!)
 CALLS_LOG=/dev/null python3 stand/mcp_server.py > /dev/null 2>&1 & PIDS+=($!)
 (cd adapter && exec env MCP_TARGETS=notes=http://127.0.0.1:3001/mcp PORT=9191 OPA_URL=http://127.0.0.1:8181/v1/data/admission python3 adapter.py) > "$OUT/adapter.log" 2>&1 & PIDS+=($!)
 for p in 8181 3001 9191; do wait_port $p; done

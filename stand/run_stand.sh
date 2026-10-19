@@ -18,7 +18,10 @@ python3 stand/idp.py keygen stand/idp
 python3 stand/idp.py keygen stand/idp-forged
 tok(){ python3 stand/idp.py token "$@"; }
 
-"$OPA" run --server --addr 127.0.0.1:8181 policy/admission.rego stand/data.json > "$OUT/opa.log" 2>&1 & PIDS+=($!)
+# Единый источник: политику шлюз читает из build/data.json, сгенерированного из decisions/,
+# а не из рукописного файла. Так на стенде работает та же цепочка «решение в git → политика».
+python3 gen/generate.py >/dev/null
+"$OPA" run --server --addr 127.0.0.1:8181 policy/admission.rego build/data.json > "$OUT/opa.log" 2>&1 & PIDS+=($!)
 CALLS_LOG="$OUT/server-calls.log" python3 stand/mcp_server.py > "$OUT/mcp.log" 2>&1 & MCP=$!; PIDS+=($MCP)
 (cd adapter && exec env ADAPTER_LOG_INPUT=1 MCP_TARGETS=notes=http://127.0.0.1:3001/mcp PORT=9191 OPA_URL=http://127.0.0.1:8181/v1/data/admission python3 adapter.py) > "$OUT/adapter.log" 2>&1 &
 ADAPTER=$!; PIDS+=($ADAPTER)
