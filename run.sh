@@ -11,3 +11,11 @@ python3 gen/generate.py
 (cd adapter && python3 -W error::ResourceWarning -m unittest -v test_adapter) 2>&1 | tee results/adapter-test.txt
 # Регрессия: правка решения в git ломает тест (T10).
 ./scripts/mutation_check.sh 2>&1 | tee results/mutation-check.txt
+# Вторая конфигурация — контроль потока (OpenAPPA) через appa replay, если установлен appa.
+APPA="${APPA:-$(command -v appa || echo "$HOME/.local/bin/appa")}"
+if [ -x "$APPA" ]; then
+  echo "--- контроль потока (lethal trifecta), $("$APPA" --version) ---"
+  "$APPA" replay --config flow/contract.toml -v flow 2>&1 | tee results/flow-replay.txt
+else
+  echo "--- appa не установлен, контроль потока пропущен (см. flow/README.md) ---"
+fi
