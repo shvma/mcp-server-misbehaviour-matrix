@@ -1,13 +1,14 @@
-{"addrs":["127.0.0.1:8181"],"diagnostic-addrs":[],"fields.time":"2026-10-19T17:22:47.336976+03:00","level":"info","msg":"Initializing server.","time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61137","level":"info","msg":"Received request.","req_id":1,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61137","level":"info","msg":"Sent response.","req_id":1,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":368,"resp_duration":0.637042,"resp_status":200,"time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61148","level":"info","msg":"Received request.","req_id":2,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61148","level":"info","msg":"Sent response.","req_id":2,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":387,"resp_duration":0.297875,"resp_status":200,"time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61161","level":"info","msg":"Received request.","req_id":3,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61161","level":"info","msg":"Sent response.","req_id":3,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":367,"resp_duration":0.350792,"resp_status":200,"time":"2026-10-19T17:22:47+03:00"}
-{"client_addr":"127.0.0.1:61180","level":"info","msg":"Received request.","req_id":4,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-19T17:22:48+03:00"}
-{"client_addr":"127.0.0.1:61180","level":"info","msg":"Sent response.","req_id":4,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":387,"resp_duration":0.312833,"resp_status":200,"time":"2026-10-19T17:22:48+03:00"}
-{"client_addr":"127.0.0.1:61192","level":"info","msg":"Received request.","req_id":5,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-19T17:22:48+03:00"}
-{"client_addr":"127.0.0.1:61192","level":"info","msg":"Sent response.","req_id":5,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":363,"resp_duration":0.29025,"resp_status":200,"time":"2026-10-19T17:22:48+03:00"}
-{"level":"info","msg":"Shutting down...","time":"2026-10-19T17:22:48+03:00"}
-{"level":"info","msg":"Server shutdown.","time":"2026-10-19T17:22:48+03:00"}
+{"addrs":["127.0.0.1:8181"],"diagnostic-addrs":[],"fields.time":"2026-10-20T17:15:40.11918+03:00","level":"info","msg":"Initializing server.","time":"2026-10-20T17:15:40+03:00"}
+{"current_version":"1.21.2","download_opa":"https://openpolicyagent.org/downloads/v1.21.3/opa_darwin_arm64_static","latest_version":"1.21.3","level":"info","msg":"OPA is out of date.","release_notes":"https://github.com/open-policy-agent/opa/releases/tag/v1.21.3","time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53759","level":"info","msg":"Received request.","req_id":1,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53759","level":"info","msg":"Sent response.","req_id":1,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":368,"resp_duration":0.441792,"resp_status":200,"time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53770","level":"info","msg":"Received request.","req_id":2,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53770","level":"info","msg":"Sent response.","req_id":2,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":387,"resp_duration":0.277375,"resp_status":200,"time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53783","level":"info","msg":"Received request.","req_id":3,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53783","level":"info","msg":"Sent response.","req_id":3,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":367,"resp_duration":0.271792,"resp_status":200,"time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53802","level":"info","msg":"Received request.","req_id":4,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53802","level":"info","msg":"Sent response.","req_id":4,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":387,"resp_duration":0.265583,"resp_status":200,"time":"2026-10-20T17:15:40+03:00"}
+{"client_addr":"127.0.0.1:53814","level":"info","msg":"Received request.","req_id":5,"req_method":"POST","req_path":"/v1/data/admission","time":"2026-10-20T17:15:41+03:00"}
+{"client_addr":"127.0.0.1:53814","level":"info","msg":"Sent response.","req_id":5,"req_method":"POST","req_path":"/v1/data/admission","resp_bytes":363,"resp_duration":0.270917,"resp_status":200,"time":"2026-10-20T17:15:41+03:00"}
+{"level":"info","msg":"Shutting down...","time":"2026-10-20T17:15:41+03:00"}
+{"level":"info","msg":"Server shutdown.","time":"2026-10-20T17:15:41+03:00"}
