@@ -1,0 +1,12 @@
+{
+  "agentgateway": "1.6.0",
+  "opa": "Version: 1.21.2",
+  "images": {
+    "keycloak": "quay.io/keycloak/keycloak:26.4.2@sha256:3617b09bb4b7510a8d8d9b9fc5707399e2d70688dbcc2f8fb013a144829be1b9",
+    "db": "postgres:17-alpine@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b",
+    "postgrest": "postgrest/postgrest:v12.2.12@sha256:5f4ce744539bbba786b4e24dbbd95bdb2a956dcf568c5374995a0ff4a68f5bd2"
+  },
+  "python": "3.9.6",
+  "cryptography": "44.0.2",
+  "platform": "macOS-26.6.2-arm64-arm-64bit"
+}

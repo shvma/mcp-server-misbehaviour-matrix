@@ -1,9 +1,0 @@
-# yaml-language-server: $schema=https://agentgateway.dev/schema/config
-# Голый шлюз для замера задержки: тот же сервер notes, без токена, extAuthz и правил.
-# По образцу examples/mcp-basic из agentgateway v1.6.0.
-mcp:
-  port: 3002
-  targets:
-  - name: notes
-    mcp:
-      host: http://localhost:3001/mcp

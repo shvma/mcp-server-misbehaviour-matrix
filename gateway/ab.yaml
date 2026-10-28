@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Column (a+b): both the per-call check and token exchange.
+mcp:
+  port: 3000
+  policies:
+    jwtAuth:
+      mode: strict
+      issuer: http://localhost:8080/realms/stand
+      audiences: [mcp-gateway]
+      # Keep the validated token in place: the next hop needs it (exchange or the adapter's own check).
+      preserveToken: true
+      jwks:
+        file: .run/jwks.json
+    extAuthz:
+      conditional:
+      - condition: has(mcp.tool)
+        host: localhost:9191
+        protocol:
+          http:
+            path: '"/check"'
+            addRequestHeaders:
+              content-type: '"application/json"'
+              :method: '"POST"'
+            body: |
+              {
+                "agent": jwt.azp,
+                "tool": {"server": mcp.tool.target, "name": mcp.tool.name},
+                "arguments": mcp.tool.arguments
+              }
+            metadata:
+              decision: json(response.body).allow
+    authorization:
+      rules:
+      - require: '!has(mcp.tool) || extauthz.decision == true'
+  targets:
+  - name: notes
+    mcp:
+      host: http://localhost:3001/mcp
+    policies:
+      backendAuth:
+        oauthTokenExchange:
+          host: localhost:8080
+          path: /realms/stand/protocol/openid-connect/token
+          audiences: [notes-api]
+          clientAuth:
+            clientId: gateway
+            clientSecret: gateway-secret
+            method: clientSecretBasic

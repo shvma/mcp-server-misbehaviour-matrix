@@ -1,0 +1,26 @@
+test_argument_outside_pattern_denied (test_decision.DecisionTest) ... ok
+test_bad_request (test_decision.DecisionTest) ... ok
+test_changed_definition_denies (test_decision.DecisionTest) ... ok
+test_http_status_and_no_reasons_in_body (test_decision.DecisionTest) ... {"tool": "notes/read_note", "agent": "agent", "allow": true, "reasons": []}
+{"tool": "notes/read_note", "agent": "other", "allow": false, "reasons": ["agent_not_admitted"]}
+{"tool": "None/None", "agent": null, "allow": false, "reasons": ["bad_request"]}
+ok
+test_mcp_down_fails_closed (test_decision.DecisionTest) ... ok
+test_other_agent_denied (test_decision.DecisionTest) ... ok
+test_pdp_down_fails_closed (test_decision.DecisionTest) ... ok
+test_pdp_wrong_path_fails_closed (test_decision.DecisionTest) ... ok
+test_pinned_definition_allows (test_decision.DecisionTest) ... ok
+test_tool_missing_from_list (test_decision.DecisionTest) ... ok
+test_unknown_target (test_decision.DecisionTest) ... ok
+test_answer_comes_from_data_api_not_upstream (test_typed_adapter.TypedAdapterTest) ... ok
+test_bad_arguments_refused (test_typed_adapter.TypedAdapterTest) ... ok
+test_data_api_error_is_an_error (test_typed_adapter.TypedAdapterTest) ... ok
+test_missing_token_refused (test_typed_adapter.TypedAdapterTest) ... ok
+test_published_definition_is_the_adapters_own (test_typed_adapter.TypedAdapterTest) ... ok
+test_query_is_scoped_to_caller (test_typed_adapter.TypedAdapterTest) ... ok
+test_unknown_tool_refused (test_typed_adapter.TypedAdapterTest) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.103s
+
+OK

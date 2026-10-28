@@ -1,6 +1,0 @@
-adapter on 127.0.0.1:9191
-{"tool": "notes/read", "agent": "stand-agent", "allow": true, "reasons": [], "input": {"agent": "stand-agent", "tool": {"server": "notes", "name": "read"}, "arguments": {"path": "/public/a"}}}
-{"tool": "notes/read", "agent": "stand-agent", "allow": false, "reasons": ["path_not_allowed"], "input": {"agent": "stand-agent", "tool": {"server": "notes", "name": "read"}, "arguments": {"path": "/private/b"}}}
-{"tool": "notes/read", "agent": "other-agent", "allow": false, "reasons": ["agent_not_admitted"], "input": {"agent": "other-agent", "tool": {"server": "notes", "name": "read"}, "arguments": {"path": "/public/a"}}}
-{"tool": "notes/read", "agent": "stand-agent", "allow": false, "reasons": ["path_not_allowed"], "input": {"agent": "stand-agent", "tool": {"server": "notes", "name": "read"}, "arguments": {"path": "/public/../private/b"}}}
-{"tool": "notes/read", "agent": "stand-agent", "allow": false, "reasons": ["definition_changed"], "input": {"agent": "stand-agent", "tool": {"server": "notes", "name": "read"}, "arguments": {"path": "/public/a"}}}

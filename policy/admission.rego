@@ -1,106 +1,70 @@
-# Политика допуска вызова MCP-инструмента. Логика фиксирована, решения приходят данными:
-# data.decisions генерирует gen/generate.py из decisions/*.json.
+# Admission of one MCP tool call. The logic is fixed; what is allowed comes as data (data.tools,
+# policy/data.json): which agent may call which tool, argument constraints, pinned definition hash.
 #
-# Вход от шлюза (PEP):
-#   {"agent": "...", "tool": {"server": "...", "name": "...", "definition_sha256": "..."}, "arguments": {...}}
+# Input from the decision service:
+#   {"agent": "...", "tool": {"server": "...", "name": "...", "definition_sha256": "<live hash>"},
+#    "arguments": {...}}
 #
-# Всё закрыто по умолчанию: разрешение только если решение есть и ни одна причина отказа не сработала.
+# Closed by default: allow only if the tool is listed and no deny reason fires.
 #
-# Ловушка Rego, из-за которой здесь вспомогательные правила: если внутри `not` стоит ссылка
-# на поле входа, OPA выносит её вычисление за пределы `not`. Поля нет -> тело правила отказа
-# рушится -> причина не добавляется -> вызов РАЗРЕШЁН. Поэтому каждое поле входа читается
-# только внутри вспомогательного правила (agent_admitted, definition_matches, still_valid,
-# path_allowed, recipient_allowed): нет поля -> правило не определено -> `not` даёт отказ.
-# Найдено тестами test_missing_agent_denied, test_path_missing_denied, test_bad_date_fails_closed.
-package admission
+# Rego pitfall that shapes this file: a reference to a missing input field inside `not` is hoisted
+# out of the negation; the deny rule's body then fails, no reason is added, and the call is ALLOWED.
+# So every input field is read only inside a helper rule (agent_admitted, definition_matches,
+# argument_ok): a missing field leaves the helper undefined and `not` produces the denial.
+package mcp.admission
 
 default allow := false
 
 tool_id := sprintf("%s/%s", [input.tool.server, input.tool.name])
 
-decision := data.decisions[tool_id]
+entry := data.tools[tool_id]
 
 allow if {
-	decision
+	entry
 	count(deny_reasons) == 0
 }
 
-deny_reasons contains "no_decision" if not data.decisions[tool_id]
-
-deny_reasons contains "verdict_not_allowing" if {
-	decision
-	not decision.verdict in {"allow", "allow_with_constraints"}
-}
+deny_reasons contains "tool_not_listed" if not data.tools[tool_id]
 
 deny_reasons contains "agent_not_admitted" if {
-	decision
+	entry
 	not agent_admitted
 }
 
-agent_admitted if input.agent in decision.agents
+agent_admitted if input.agent in entry.agents
 
-# Определение инструмента изменилось с момента ревью: старое решение больше не про этот инструмент.
+# The definition served now differs from the one that was pinned.
 deny_reasons contains "definition_changed" if {
-	decision
+	entry
 	not definition_matches
 }
 
-definition_matches if input.tool.definition_sha256 == decision.definition_sha256
+definition_matches if input.tool.definition_sha256 == entry.definition_sha256
 
-# Невалидная дата тоже даёт отказ: parse не определён, "not" срабатывает.
-deny_reasons contains "expired" if {
-	decision
-	not still_valid
+# Every argument the policy constrains must be present and match.
+deny_reasons contains "argument_not_allowed" if {
+	some name
+	entry.arguments[name]
+	not argument_ok(name)
 }
 
-still_valid if time.now_ns() < time.parse_rfc3339_ns(decision.expires)
-
-deny_reasons contains "constraints_missing" if {
-	decision.verdict == "allow_with_constraints"
-	count(object.get(decision, "constraints", {})) == 0
+argument_ok(name) if {
+	value := input.arguments[name]
+	is_string(value)
+	regex.match(entry.arguments[name].pattern, value)
 }
 
-# Защита самого PDP: constraints с ключом, который политика не умеет исполнять, даёт отказ,
-# а не тихое разрешение без ограничения. Иначе будущий ключ (напр. max_size) = fail-open.
-# Сейчас это также ловит генератор по схеме, но PDP не должен зависеть от того, что вход валиден.
+# Arguments the policy does not know are refused, not passed through unchecked.
+deny_reasons contains "unknown_argument" if {
+	entry
+	some name
+	input.arguments[name]
+	not entry.arguments[name]
+}
+
+# A constraint kind the policy cannot enforce denies instead of silently allowing.
 deny_reasons contains "unknown_constraint" if {
-	decision.verdict == "allow_with_constraints"
-	some k
-	decision.constraints[k]
-	not k in {"recipient_domain_in", "path_prefix"}
-}
-
-deny_reasons contains "recipient_not_allowed" if {
-	domains := decision.constraints.recipient_domain_in
-	not recipient_allowed(domains)
-}
-
-deny_reasons contains "path_not_allowed" if {
-	prefix := decision.constraints.path_prefix
-	not path_allowed(prefix)
-}
-
-# Префикс сравнивается со строкой, поэтому сегмент ".." запрещён: иначе путь начинается
-# с разрешённого префикса, а ведёт за его пределы.
-path_allowed(prefix) if {
-	endswith(prefix, "/")
-	path := input.arguments.path
-	is_string(path)
-	startswith(path, prefix)
-	not has_parent_segment(path)
-}
-
-has_parent_segment(path) if ".." in split(path, "/")
-
-# Ровно один адрес на вызов: один "@", без пробелов, запятых, точек с запятой и угловых скобок.
-# Иначе в одно поле помещается список, и внешний адрес проходит вместе с внутренним.
-# Домен сравнивается целиком: поддомен разрешённого домена не разрешён.
-recipient_allowed(domains) if {
-	to := input.arguments.to
-	is_string(to)
-	not regex.match(`[\s,;<>"]`, to)
-	parts := split(to, "@")
-	count(parts) == 2
-	parts[0] != ""
-	parts[1] in domains
+	some name, kind
+	entry.arguments[name][kind]
+	kind != "pattern"
 }

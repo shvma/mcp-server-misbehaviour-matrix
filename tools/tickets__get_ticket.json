@@ -1,1 +1,0 @@
-{"name":"get_ticket","description":"Вернуть тикет по номеру","inputSchema":{"type":"object","required":["id"],"properties":{"id":{"type":"string"}}}}

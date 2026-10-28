@@ -1,1 +1,0 @@
-{"name":"move_to_folder","description":"Переместить файл в папку","inputSchema":{"type":"object","required":["file_id","folder_id"],"properties":{"file_id":{"type":"string"},"folder_id":{"type":"string"}}}}

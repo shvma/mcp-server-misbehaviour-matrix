@@ -1,1 +1,0 @@
-{"name":"send","description":"Отправить письмо","inputSchema":{"type":"object","required":["to","subject","body"],"properties":{"to":{"type":"string"},"subject":{"type":"string"},"body":{"type":"string"}}}}

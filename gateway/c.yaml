@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Column (c): the agent reaches only the typed adapter; the third-party server is behind it.
+mcp:
+  port: 3000
+  policies:
+    jwtAuth:
+      mode: strict
+      issuer: http://localhost:8080/realms/stand
+      audiences: [mcp-gateway]
+      # Keep the validated token in place: the next hop needs it (exchange or the adapter's own check).
+      preserveToken: true
+      jwks:
+        file: .run/jwks.json
+  targets:
+  - name: notes
+    mcp:
+      host: http://localhost:3002/mcp

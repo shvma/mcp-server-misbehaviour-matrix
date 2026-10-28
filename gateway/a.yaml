@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Column (a): per-call check at the gateway. extAuthz -> decision service (OPA + live definition hash). The server keeps its own account.
+mcp:
+  port: 3000
+  policies:
+    jwtAuth:
+      mode: strict
+      issuer: http://localhost:8080/realms/stand
+      audiences: [mcp-gateway]
+      jwks:
+        file: .run/jwks.json
+    extAuthz:
+      conditional:
+      - condition: has(mcp.tool)
+        host: localhost:9191
+        protocol:
+          http:
+            path: '"/check"'
+            addRequestHeaders:
+              content-type: '"application/json"'
+              :method: '"POST"'
+            body: |
+              {
+                "agent": jwt.azp,
+                "tool": {"server": mcp.tool.target, "name": mcp.tool.name},
+                "arguments": mcp.tool.arguments
+              }
+            metadata:
+              decision: json(response.body).allow
+    authorization:
+      rules:
+      - require: '!has(mcp.tool) || extauthz.decision == true'
+  targets:
+  - name: notes
+    mcp:
+      host: http://localhost:3001/mcp

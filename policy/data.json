@@ -1,0 +1,15 @@
+{
+  "tools": {
+    "notes/read_note": {
+      "agents": [
+        "agent"
+      ],
+      "definition_sha256": "d1c4ac1e5c0e30413163fc200a011bdbf1aeff28e85a362e5d0e34d63e062348",
+      "arguments": {
+        "id": {
+          "pattern": "^[a-z][0-9]+$"
+        }
+      }
+    }
+  }
+}

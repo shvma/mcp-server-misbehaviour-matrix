@@ -1,8 +1,0 @@
-ok    flow/trifecta.appa:7 mcp/mail/send allow
-ok    flow/trifecta.appa:13 mcp/tickets/get_ticket allow (after accepting the narrowing)
-ok    flow/trifecta.appa:19 mcp/mail/send deny
-ok    flow/trifecta.appa:25 mcp/mail/send allow
-ok    flow/trifecta.appa:31 mcp/websearch/query allow (after accepting the narrowing)
-ok    flow/trifecta.appa:37 mcp/mail/send deny
-ok    flow/trifecta.appa
-1 file: 1 ok, 0 failed, 0 could not run

@@ -1,0 +1,1 @@
+{"name": "read_note", "description": "Read one note by its id and return its text.", "inputSchema": {"type": "object", "required": ["id"], "properties": {"id": {"type": "string"}}, "additionalProperties": false}}

@@ -1,3 +1,4 @@
-build/
-stand/idp/
-stand/idp-forged/
+.run/
+__pycache__/
+*.pyc
+.DS_Store

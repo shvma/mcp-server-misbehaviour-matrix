@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Column (b): the gateway exchanges the agent token for a narrow token for notes-api (RFC 8693); the data API enforces rights (RLS).
+mcp:
+  port: 3000
+  policies:
+    jwtAuth:
+      mode: strict
+      issuer: http://localhost:8080/realms/stand
+      audiences: [mcp-gateway]
+      # Keep the validated token in place: the next hop needs it (exchange or the adapter's own check).
+      preserveToken: true
+      jwks:
+        file: .run/jwks.json
+  targets:
+  - name: notes
+    mcp:
+      host: http://localhost:3001/mcp
+    policies:
+      backendAuth:
+        oauthTokenExchange:
+          host: localhost:8080
+          path: /realms/stand/protocol/openid-connect/token
+          audiences: [notes-api]
+          clientAuth:
+            clientId: gateway
+            clientSecret: gateway-secret
+            method: clientSecretBasic
