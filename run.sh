@@ -2,7 +2,8 @@
 # One command: start the testbed, run every column x behaviour, rebuild the matrix, run the unit tests.
 #   ./run.sh            full run
 #   ./run.sh --down     stop and remove the testbed containers
-# Needs: Docker, Python 3.9+ with `cryptography`, opa and agentgateway on PATH (or OPA/AGW set).
+# Needs: Docker, Python 3.9+ with the packages in requirements.txt (`cryptography`, `grpcio`),
+#        opa and agentgateway on PATH (or OPA/AGW set).
 set -euo pipefail
 cd "$(dirname "$0")"
 COMPOSE=(docker compose -p mcpcase -f infra/compose.yaml)

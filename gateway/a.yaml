@@ -1,5 +1,7 @@
 # yaml-language-server: $schema=https://agentgateway.dev/schema/config
-# Column (a): per-call check at the gateway. extAuthz -> decision service (OPA + live definition hash). The server keeps its own account.
+# Column (a): per-call check at the gateway. extAuthz -> decision service (OPA: agent + arguments).
+# The tool definition is pinned by mcpGuardrails on the tools/list RESPONSE (B1) -> guardrail/pin_processor.py,
+# so the pin is checked on the bytes the agent receives, not via a side channel. The server keeps its own account.
 mcp:
   port: 3000
   policies:
@@ -9,6 +11,13 @@ mcp:
       audiences: [mcp-gateway]
       jwks:
         file: .run/jwks.json
+    mcpGuardrails:
+      processors:
+      - kind: remote
+        host: "localhost:9201"
+        methods:
+          tools/list: response
+        failureMode: failClosed
     extAuthz:
       conditional:
       - condition: has(mcp.tool)

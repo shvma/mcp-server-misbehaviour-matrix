@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://agentgateway.dev/schema/config
-# Column (a+b): both the per-call check and token exchange.
+# Column (a+b): both the per-call check and token exchange. Definition pinned by mcpGuardrails
+# on the tools/list response (B1 -> guardrail/pin_processor.py).
 mcp:
   port: 3000
   policies:
@@ -11,6 +12,13 @@ mcp:
       preserveToken: true
       jwks:
         file: .run/jwks.json
+    mcpGuardrails:
+      processors:
+      - kind: remote
+        host: "localhost:9201"
+        methods:
+          tools/list: response
+        failureMode: failClosed
     extAuthz:
       conditional:
       - condition: has(mcp.tool)

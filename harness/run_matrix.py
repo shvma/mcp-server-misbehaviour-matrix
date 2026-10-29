@@ -29,18 +29,23 @@ OPA = os.environ.get("OPA") or shutil.which("opa") or str(Path.home() / ".local/
 AGW = os.environ.get("AGW") or shutil.which("agentgateway") or str(Path.home() / ".local/bin/agentgateway")
 DB = os.environ.get("DB_CONTAINER", "mcpcase-db-1")
 GATEWAY = "http://127.0.0.1:3000/mcp"
+SERVER = "http://127.0.0.1:3001/mcp"
 LATENCY_CALLS = int(os.environ.get("LATENCY_CALLS", "200"))
 
-COLUMNS = {  # column -> (gateway config, server credential mode, needs decision service, needs adapter)
-    "a": ("gateway/a.yaml", "own", True, False),
-    "b": ("gateway/b.yaml", "forwarded", False, False),
-    "ab": ("gateway/ab.yaml", "forwarded", True, False),
-    "c": ("gateway/c.yaml", "none", False, True),
+# column -> what sits on the path. cfg None = no gateway (agent talks straight to the server: the
+# baseline). `cred` is the credential the server uses toward the data API; it is the (b) treatment
+# (token exchange narrows it), not an independent knob, so build_matrix reports it as its own row.
+COLUMNS = {
+    "none": {"cfg": None, "cred": "own", "direct": True, "decision": False, "adapter": False},
+    "a": {"cfg": "gateway/a.yaml", "cred": "own", "decision": True, "adapter": False},
+    "b": {"cfg": "gateway/b.yaml", "cred": "forwarded", "decision": False, "adapter": False},
+    "ab": {"cfg": "gateway/ab.yaml", "cred": "forwarded", "decision": True, "adapter": False},
+    "c": {"cfg": "gateway/c.yaml", "cred": "none", "decision": False, "adapter": True},
 }
 BEHAVIORS = ["C0", "C1", "C2", "C3", "C4", "C5", "C6"]
 SEED = ("delete from api.notes; insert into api.notes values "
-        "('a1','alice','alice: release plan for Thursday'),"
-        "('b1','bob','CANARY-BOB-7f3a: bob private note');")
+        "('a1','alice','CANARY-ALICE-9d2e: alice release plan for Thursday'),"
+        "('b1','bob','bob private note');")
 
 
 def psql(sql):
@@ -122,7 +127,8 @@ def versions():
 
 
 def run_one(procs, column, behavior, agent_token):
-    cfg, cred, needs_decision, needs_adapter = COLUMNS[column]
+    c = COLUMNS[column]
+    cred, needs_decision, needs_adapter = c["cred"], c["decision"], c["adapter"]
     psql(SEED)
     for f in ("ledger.jsonl", "sink.jsonl", "server-trace.jsonl", "decision-run.log"):
         (RUN / f).write_text("")
@@ -131,11 +137,13 @@ def run_one(procs, column, behavior, agent_token):
                   env={"BEHAVIOR": behavior, "CREDENTIAL": cred, "TRACE": str(RUN / "server-trace.jsonl")})
     if needs_adapter:
         per_run.start("adapter", [sys.executable, "adapter/typed_adapter.py"], port=3002)
-    per_run.start("gateway", [AGW, "-f", cfg], port=3000)
+    url = SERVER if c.get("direct") else GATEWAY
+    if not c.get("direct"):
+        per_run.start("gateway", [AGW, "-f", c["cfg"]], port=3000)
     try:
         decision_log_start = (RUN / "decision.log").stat().st_size if needs_decision else 0
         before = snapshot()
-        agent = agent_session(agent_token)
+        agent = agent_session(agent_token, url)
         time.sleep(0.2)  # let side effects land in logs
         after = snapshot()
         decisions = []
@@ -151,14 +159,18 @@ def run_one(procs, column, behavior, agent_token):
 
 
 def latency(procs, column, agent_token):
-    cfg, cred, _, needs_adapter = COLUMNS[column] if column != "direct" else (None, "own", False, False)
+    if column == "direct":
+        cfg, cred, needs_adapter = None, "own", False
+    else:
+        c = COLUMNS[column]
+        cfg, cred, needs_adapter = c["cfg"], c["cred"], c["adapter"]
     psql(SEED)
     per_run = Procs()
     per_run.start("server", [sys.executable, "server/notes_server.py"], port=3001,
                   env={"BEHAVIOR": "C0", "CREDENTIAL": cred, "TRACE": str(RUN / "latency-trace.jsonl")})
     if needs_adapter:
         per_run.start("adapter", [sys.executable, "adapter/typed_adapter.py"], port=3002)
-    url = "http://127.0.0.1:3001/mcp"
+    url = SERVER
     if cfg:
         per_run.start("gateway", [AGW, "-f", cfg], port=3000)
         url = GATEWAY
@@ -181,6 +193,30 @@ def latency(procs, column, agent_token):
             "p95_ms": round(samples[int(0.95 * len(samples)) - 1], 2), "samples_ms": [round(s, 3) for s in samples]}
 
 
+def gateway_proofs(agent_token):
+    """Show the gateway (jwtAuth: strict) rejects a call with no token and one with a forged
+    signature, and accepts a valid one. These are the gateway-works proofs (#5)."""
+    init = {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+            "params": {"protocolVersion": "2025-06-18", "capabilities": {},
+                       "clientInfo": {"name": "agent", "version": "1.0"}}}
+    accept = {"Accept": "application/json, text/event-stream"}
+    forged = agent_token.rsplit(".", 1)[0] + ".Zm9yZ2VkLXNpZ25hdHVyZQ"  # valid header.payload, bad sig
+    per = Procs()
+    per.start("server", [sys.executable, "server/notes_server.py"], port=3001,
+              env={"BEHAVIOR": "C0", "CREDENTIAL": "own", "TRACE": str(RUN / "proofs-trace.jsonl")})
+    per.start("gateway", [AGW, "-f", "gateway/a.yaml"], port=3000)
+    try:
+        no_token = net.http("POST", GATEWAY, body=init, headers=accept)[0]
+        wrong_sig = net.http("POST", GATEWAY, token=forged, body=init, headers=accept)[0]
+        valid = net.http("POST", GATEWAY, token=agent_token, body=init, headers=accept)[0]
+    finally:
+        per.stop_all()
+    return {"no_token_status": no_token, "forged_signature_status": wrong_sig,
+            "valid_token_status": valid,
+            "no_token_rejected": no_token in (401, 403), "forged_rejected": wrong_sig in (401, 403),
+            "valid_accepted": valid == 200}
+
+
 def main():
     RESULTS.mkdir(exist_ok=True)
     RUN.mkdir(exist_ok=True)
@@ -195,6 +231,8 @@ def main():
     base.start("billing", [sys.executable, "services/billing.py"], port=3101, env={"LEDGER": str(RUN / "ledger.jsonl")})
     base.start("sink", [sys.executable, "services/sink.py"], port=3102, env={"SINK_LOG": str(RUN / "sink.jsonl")})
     base.start("opa", [OPA, "run", "--server", "--addr", "127.0.0.1:8181", "policy/admission.rego", "policy/data.json"], port=8181)
+    base.start("guardrail", [sys.executable, "guardrail/pin_processor.py"], port=9201,
+               env={"PORT": "9201", "DATA_JSON": str(ROOT / "policy/data.json")})
     decision_log = open(RUN / "decision.log", "a")
     decision = subprocess.Popen([sys.executable, "decision/decision.py"], cwd=ROOT, stdout=decision_log, stderr=decision_log)
     base.items.append((decision, 9191))
@@ -208,6 +246,7 @@ def main():
                 records.append(rec)
                 print(f"{column:>2} {behavior}: call {rec['agent']['call']['status']}", flush=True)
         (RESULTS / "raw.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records))
+        (RESULTS / "gateway-proofs.json").write_text(json.dumps(gateway_proofs(agent_token), indent=1) + "\n")
         lat = [latency(base, c, agent_token) for c in ("direct", *COLUMNS)]
         (RESULTS / "latency.json").write_text(json.dumps(lat, indent=1) + "\n")
         (RESULTS / "versions.json").write_text(json.dumps(versions(), indent=2) + "\n")

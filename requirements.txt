@@ -1,0 +1,4 @@
+cryptography
+grpcio
+# grpcio-tools is only needed to regenerate guardrail/gen/ from guardrail/ext_mcp.proto:
+#   python3 -m grpc_tools.protoc -I guardrail --python_out guardrail/gen --grpc_python_out guardrail/gen guardrail/ext_mcp.proto

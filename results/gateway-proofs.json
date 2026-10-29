@@ -1,0 +1,8 @@
+{
+ "no_token_status": 401,
+ "forged_signature_status": 401,
+ "valid_token_status": 200,
+ "no_token_rejected": true,
+ "forged_rejected": true,
+ "valid_accepted": true
+}

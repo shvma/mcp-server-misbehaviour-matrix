@@ -1,17 +1,34 @@
+test_allowed_call_allows (test_decision.DecisionTest) ... ok
 test_argument_outside_pattern_denied (test_decision.DecisionTest) ... ok
 test_bad_request (test_decision.DecisionTest) ... ok
-test_changed_definition_denies (test_decision.DecisionTest) ... ok
 test_http_status_and_no_reasons_in_body (test_decision.DecisionTest) ... {"tool": "notes/read_note", "agent": "agent", "allow": true, "reasons": []}
 {"tool": "notes/read_note", "agent": "other", "allow": false, "reasons": ["agent_not_admitted"]}
 {"tool": "None/None", "agent": null, "allow": false, "reasons": ["bad_request"]}
 ok
-test_mcp_down_fails_closed (test_decision.DecisionTest) ... ok
 test_other_agent_denied (test_decision.DecisionTest) ... ok
 test_pdp_down_fails_closed (test_decision.DecisionTest) ... ok
 test_pdp_wrong_path_fails_closed (test_decision.DecisionTest) ... ok
-test_pinned_definition_allows (test_decision.DecisionTest) ... ok
-test_tool_missing_from_list (test_decision.DecisionTest) ... ok
-test_unknown_target (test_decision.DecisionTest) ... ok
+test_unknown_argument_denied (test_decision.DecisionTest) ... ok
+test_unlisted_tool_denied (test_decision.DecisionTest) ... ok
+test_audience_list_accepted (test_jwtcheck.JwtCheckTest) ... ok
+test_bad_signature_rejected (test_jwtcheck.JwtCheckTest) ... ok
+test_expired_rejected (test_jwtcheck.JwtCheckTest) ... ok
+test_malformed (test_jwtcheck.JwtCheckTest) ... ok
+test_peek_garbage_returns_empty (test_jwtcheck.JwtCheckTest) ... ok
+test_peek_returns_unverified_claims (test_jwtcheck.JwtCheckTest) ... ok
+test_valid_returns_claims (test_jwtcheck.JwtCheckTest) ... ok
+test_wrong_alg_rejected (test_jwtcheck.JwtCheckTest) ... ok
+test_wrong_audience_rejected (test_jwtcheck.JwtCheckTest) ... ok
+test_wrong_issuer_rejected (test_jwtcheck.JwtCheckTest) ... ok
+test_honest_tools_list_passes (test_pin_processor.PinProcessorTest) ... ok
+test_non_list_method_passes (test_pin_processor.PinProcessorTest) ... ok
+test_pin_comes_from_policy_data (test_pin_processor.PinProcessorTest) ... ok
+test_request_phase_passes (test_pin_processor.PinProcessorTest) ... ok
+test_tampered_description_denied (test_pin_processor.PinProcessorTest) ... [pin] DENY read_note: 0e7c3b6ac682 != pin d1c4ac1e5c0e
+ok
+test_tampered_schema_denied (test_pin_processor.PinProcessorTest) ... [pin] DENY read_note: 79ab219d4179 != pin d1c4ac1e5c0e
+ok
+test_unpinned_tool_passes (test_pin_processor.PinProcessorTest) ... ok
 test_answer_comes_from_data_api_not_upstream (test_typed_adapter.TypedAdapterTest) ... ok
 test_bad_arguments_refused (test_typed_adapter.TypedAdapterTest) ... ok
 test_data_api_error_is_an_error (test_typed_adapter.TypedAdapterTest) ... ok
@@ -21,6 +38,6 @@ test_query_is_scoped_to_caller (test_typed_adapter.TypedAdapterTest) ... ok
 test_unknown_tool_refused (test_typed_adapter.TypedAdapterTest) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 1.103s
+Ran 33 tests in 0.754s
 
 OK

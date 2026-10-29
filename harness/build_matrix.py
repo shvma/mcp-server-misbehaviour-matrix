@@ -11,12 +11,17 @@ sys.path.insert(0, str(ROOT / "harness"))
 from outcome import outcome  # noqa: E402
 
 R = ROOT / "results"
-COLUMNS = [("a", "(a) gateway: OPA + definition pin"), ("b", "(b) token exchange, rights at the target"),
+COLUMNS = [("none", "(none) no gateway"),
+           ("a", "(a) gateway: OPA + definition pin"), ("b", "(b) token exchange, rights at the target"),
            ("ab", "(a+b) both"), ("c", "(c) typed adapter")]
+# The server's credential toward the data API — the (b) treatment, shown as its own row so a column
+# changes one visible factor, not two (reviewer: "columns change two factors at once").
+CREDENTIAL = {"none": "own (broad)", "a": "own (broad)", "b": "exchanged → notes-api",
+              "ab": "exchanged → notes-api", "c": "adapter's own"}
 BEHAVIORS = [("C0", "control: honest call"),
              ("C1", "changes its tool description after it was pinned"),
-             ("C2", "shows the pinned description to the checker, a changed one to the agent"),
-             ("C3", "reads another user's object and sends it out"),
+             ("C2", "changes its description too (former split-view; the inline pin catches it)"),
+             ("C3", "sends the caller's own note to an outside service (postmark pattern)"),
              ("C4", "writes instead of reading"),
              ("C5", "replays the token it received against another service"),
              ("C6", "lies in its answer")]
@@ -25,18 +30,21 @@ LABEL = {"ok": "ok", "broken": "BROKEN", "stopped": "stopped", "not_stopped": "*
 
 # Components a tools/call crosses, per column, and which of them are this repository's code.
 PATH = {
-    "a": (["agentgateway", "decision service", "OPA", "notes server"],
-          ["decision/decision.py", "lib/defhash.py", "lib/net.py", "policy/admission.rego"]),
+    "none": (["notes server"], []),
+    "a": (["agentgateway", "decision service", "OPA", "pin guardrail", "notes server"],
+          ["decision/decision.py", "guardrail/pin_processor.py", "policy/admission.rego"]),
     "b": (["agentgateway", "Keycloak (token exchange)", "notes server", "PostgREST + PostgreSQL RLS"],
           ["infra/db/init.sql"]),
-    "ab": (["agentgateway", "decision service", "OPA", "Keycloak (token exchange)", "notes server",
-            "PostgREST + PostgreSQL RLS"],
-           ["decision/decision.py", "lib/defhash.py", "lib/net.py", "policy/admission.rego", "infra/db/init.sql"]),
+    "ab": (["agentgateway", "decision service", "OPA", "pin guardrail", "Keycloak (token exchange)",
+            "notes server", "PostgREST + PostgreSQL RLS"],
+           ["decision/decision.py", "guardrail/pin_processor.py", "policy/admission.rego", "infra/db/init.sql"]),
     "c": (["agentgateway", "typed adapter", "PostgREST + PostgreSQL"],
           ["adapter/typed_adapter.py", "lib/jwtcheck.py", "lib/net.py"]),
 }
+OWN_COMPONENTS = ("decision service", "pin guardrail", "typed adapter")
 NEEDS = {
-    "a": "nothing beyond the gateway; a live tools/list from the server on every call",
+    "none": "nothing — the agent reaches the server directly (shows the attacks landing)",
+    "a": "the gateway, a definition-pin guardrail on tools/list, and a live per-call decision",
     "b": "an IdP with RFC 8693 token exchange; a target that enforces per-user rights (here: RLS)",
     "ab": "both of the above",
     "c": "a data API the adapter can query with a read-only account; one adapter function per tool",
@@ -84,6 +92,7 @@ def main():
            "The definition of each outcome is in `harness/outcome.py`.", "",
            "| Server behaviour | " + " | ".join(c for _, c in COLUMNS) + " |",
            "|---|" + "---|" * len(COLUMNS)]
+    out.append("| _server credential → data API_ | " + " | ".join(CREDENTIAL[c] for c, _ in COLUMNS) + " |")
     for b, label in BEHAVIORS:
         out.append(f"| {b}. {label} | " + " | ".join(LABEL[cells[(c, b)]] for c, _ in COLUMNS) + " |")
     broken = [c for c, _ in COLUMNS if cells[(c, "C0")] != "ok"]
@@ -102,11 +111,11 @@ def main():
             "| | " + " | ".join(c for _, c in COLUMNS) + " |", "|---|" + "---|" * len(COLUMNS)]
     cost.append("| components on the call path | " + " | ".join(str(len(PATH[c][0])) for c, _ in COLUMNS) + " |")
     cost.append("| of them this repository's code | " + " | ".join(
-        str(sum(1 for x in PATH[c][0] if x in ("decision service", "typed adapter"))) for c, _ in COLUMNS) + " |")
+        str(sum(1 for x in PATH[c][0] if x in OWN_COMPONENTS)) for c, _ in COLUMNS) + " |")
     cost.append("| own lines on the trust path | " + " | ".join(
         str(sum(code_lines(f) for f in PATH[c][1])) for c, _ in COLUMNS) + " |")
     cost.append("| lines to add one tool | " + " | ".join([
-        f"{per_tool_policy_lines()} (policy data)", "0 (rights live in the target)",
+        "n/a (no gateway)", f"{per_tool_policy_lines()} (policy data)", "0 (rights live in the target)",
         f"{per_tool_policy_lines()} (policy data)", f"{per_tool_adapter_lines()} (adapter code)"]) + " |")
     cost.append("| requires from the environment | " + " | ".join(NEEDS[c] for c, _ in COLUMNS) + " |")
     cost.append("| latency median / p95, ms | " + " | ".join(

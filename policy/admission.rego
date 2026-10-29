@@ -33,13 +33,9 @@ deny_reasons contains "agent_not_admitted" if {
 
 agent_admitted if input.agent in entry.agents
 
-# The definition served now differs from the one that was pinned.
-deny_reasons contains "definition_changed" if {
-	entry
-	not definition_matches
-}
-
-definition_matches if input.tool.definition_sha256 == entry.definition_sha256
+# The tool definition is pinned by the gateway's mcpGuardrails on the tools/list response
+# (guardrail/pin_processor.py, reading policy/data.json), not here: OPA sees a tools/call and
+# governs the agent and the arguments, so it is not given a live definition hash to compare.
 
 # Every argument the policy constrains must be present and match.
 deny_reasons contains "argument_not_allowed" if {
@@ -55,10 +51,12 @@ argument_ok(name) if {
 }
 
 # Arguments the policy does not know are refused, not passed through unchecked.
+# Iterate the keys (object.keys), not the values: `input.arguments[name]` as a bare
+# expression is false for a falsy value, so an unknown argument sent as `false` (or 0,
+# "", null) would skip this rule and be allowed. The key is present regardless of value.
 deny_reasons contains "unknown_argument" if {
 	entry
-	some name
-	input.arguments[name]
+	some name in object.keys(input.arguments)
 	not entry.arguments[name]
 }
 

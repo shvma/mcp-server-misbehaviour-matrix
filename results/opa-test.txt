@@ -1,28 +1,28 @@
-policy/admission_test.rego:89:
-data.mcp.admission_test.test_committed_data_pins_served_definition: PASS (3.3355ms)
-policy/admission_test.rego:85:
-data.mcp.admission_test.test_empty_input_denied: PASS (3.495083ms)
-policy/admission_test.rego:69:
-data.mcp.admission_test.test_non_string_argument_denied: PASS (4.105084ms)
-policy/admission_test.rego:45:
-data.mcp.admission_test.test_changed_definition_denied: PASS (4.06825ms)
+policy/admission_test.rego:95:
+data.mcp.admission_test.test_committed_data_pins_served_definition: PASS (1.732667ms)
+policy/admission_test.rego:91:
+data.mcp.admission_test.test_empty_input_denied: PASS (5.27275ms)
 policy/admission_test.rego:27:
-data.mcp.admission_test.test_unlisted_tool_denied: PASS (1.500375ms)
-policy/admission_test.rego:34:
-data.mcp.admission_test.test_other_agent_denied: PASS (4.647209ms)
-policy/admission_test.rego:23:
-data.mcp.admission_test.test_listed_call_allowed: PASS (4.706875ms)
-policy/admission_test.rego:39:
-data.mcp.admission_test.test_missing_agent_denied: PASS (1.4435ms)
-policy/admission_test.rego:63:
-data.mcp.admission_test.test_missing_argument_denied: PASS (4.840125ms)
+data.mcp.admission_test.test_unlisted_tool_denied: PASS (5.367041ms)
+policy/admission_test.rego:60:
+data.mcp.admission_test.test_non_string_argument_denied: PASS (5.175542ms)
+policy/admission_test.rego:48:
+data.mcp.admission_test.test_argument_pattern_enforced: PASS (1.560333ms)
+policy/admission_test.rego:64:
+data.mcp.admission_test.test_unknown_argument_denied: PASS (5.572959ms)
 policy/admission_test.rego:73:
-data.mcp.admission_test.test_unknown_argument_denied: PASS (4.858375ms)
-policy/admission_test.rego:51:
-data.mcp.admission_test.test_missing_definition_denied: PASS (4.859333ms)
+data.mcp.admission_test.test_unknown_argument_false_denied: PASS (6.142542ms)
+policy/admission_test.rego:54:
+data.mcp.admission_test.test_missing_argument_denied: PASS (6.202792ms)
+policy/admission_test.rego:39:
+data.mcp.admission_test.test_missing_agent_denied: PASS (5.995542ms)
+policy/admission_test.rego:23:
+data.mcp.admission_test.test_listed_call_allowed: PASS (6.32875ms)
+policy/admission_test.rego:85:
+data.mcp.admission_test.test_unknown_constraint_kind_denied: PASS (6.086875ms)
+policy/admission_test.rego:34:
+data.mcp.admission_test.test_other_agent_denied: PASS (6.448375ms)
 policy/admission_test.rego:79:
-data.mcp.admission_test.test_unknown_constraint_kind_denied: PASS (4.933917ms)
-policy/admission_test.rego:57:
-data.mcp.admission_test.test_argument_pattern_enforced: PASS (4.941833ms)
+data.mcp.admission_test.test_unknown_argument_zero_denied: PASS (5.755667ms)
 --------------------------------------------------------------------------------
 PASS: 13/13

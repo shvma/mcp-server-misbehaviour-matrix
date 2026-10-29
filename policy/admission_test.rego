@@ -42,17 +42,8 @@ test_missing_agent_denied if {
 	"agent_not_admitted" in admission.deny_reasons with input as inp with data.tools as fixture
 }
 
-test_changed_definition_denied if {
-	inp := call({"tool": {"server": "notes", "name": "read_note", "definition_sha256": "0000"}})
-	not admission.allow with input as inp with data.tools as fixture
-	"definition_changed" in admission.deny_reasons with input as inp with data.tools as fixture
-}
-
-test_missing_definition_denied if {
-	inp := {"agent": "agent", "tool": {"server": "notes", "name": "read_note"}, "arguments": {"id": "a1"}}
-	not admission.allow with input as inp with data.tools as fixture
-	"definition_changed" in admission.deny_reasons with input as inp with data.tools as fixture
-}
+# The definition pin is enforced by the gateway guardrail on the tools/list response
+# (guardrail/pin_processor.py, tests/test_pin_processor.py), not by this policy.
 
 test_argument_pattern_enforced if {
 	inp := call({"arguments": {"id": "a1' or 1=1"}})
@@ -72,6 +63,21 @@ test_non_string_argument_denied if {
 
 test_unknown_argument_denied if {
 	inp := call({"arguments": {"id": "a1", "owner": "bob"}})
+	not admission.allow with input as inp with data.tools as fixture
+	"unknown_argument" in admission.deny_reasons with input as inp with data.tools as fixture
+}
+
+# Regression: a falsy value on an unknown argument must still deny. Iterating values
+# instead of keys let {"id":"a1","admin":false} through (the unknown_argument rule's body
+# failed on the `false`), so the call was allowed despite the promise of closed-by-default.
+test_unknown_argument_false_denied if {
+	inp := call({"arguments": {"id": "a1", "admin": false}})
+	not admission.allow with input as inp with data.tools as fixture
+	"unknown_argument" in admission.deny_reasons with input as inp with data.tools as fixture
+}
+
+test_unknown_argument_zero_denied if {
+	inp := call({"arguments": {"id": "a1", "limit": 0}})
 	not admission.allow with input as inp with data.tools as fixture
 	"unknown_argument" in admission.deny_reasons with input as inp with data.tools as fixture
 }
