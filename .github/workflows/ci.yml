@@ -24,7 +24,8 @@ jobs:
           ./opa fmt --list --fail policy
           ./opa test policy -v
       - name: unit tests
-        run: python -m unittest discover -s tests -v
+        # tests/test_decision.py starts a real OPA server
+        run: OPA="$PWD/opa" python -m unittest discover -s tests -v
       - name: README and results/*.md are rebuilt from results/raw.jsonl with no diff
         run: |
           python harness/build_matrix.py > /dev/null
