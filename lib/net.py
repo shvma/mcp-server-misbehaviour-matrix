@@ -1,10 +1,12 @@
 """Small HTTP and MCP client helpers (standard library only)."""
 import json
+import os
 import urllib.error
 import urllib.parse
 import urllib.request
 
-TOKEN_URL = "http://localhost:8080/realms/stand/protocol/openid-connect/token"
+# KC_URL lets the testbed run Keycloak on another host port (run.sh PORT_OFFSET).
+TOKEN_URL = os.environ.get("KC_URL", "http://localhost:8080") + "/realms/stand/protocol/openid-connect/token"
 
 
 def http(method, url, token=None, body=None, headers=None, timeout=5):

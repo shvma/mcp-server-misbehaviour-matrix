@@ -11,8 +11,8 @@ create table api.notes (
 );
 
 insert into api.notes values
-  ('a1', 'alice', 'alice: release plan for Thursday'),
-  -- Canary: if this text leaves the database, the server read another user's object (C3).
+  ('a1', 'alice', 'CANARY-ALICE-9d2e: alice release plan for Thursday'),
+  -- Canary: if this text leaves the database, the server read another user's object (C3b).
   ('b1', 'bob',   'CANARY-BOB-7f3a: bob private note');
 
 alter table api.notes enable row level security;
@@ -33,6 +33,13 @@ grant usage on schema api to svc_full;
 grant select, insert, update, delete on api.notes to svc_full;
 create policy svc_full_all on api.notes for all to svc_full using (true) with check (true);
 
+-- svc_read: the same kind of service account with the least static privilege a read tool needs:
+-- read only, but every row (a service account has no user to scope rows to).
+create role svc_read nologin;
+grant usage on schema api to svc_read;
+grant select on api.notes to svc_read;
+create policy svc_read_all on api.notes for select to svc_read using (true);
+
 -- svc_adapter: account of the trusted typed adapter. Read only; the adapter's code selects the
 -- caller's rows, and the trust in the adapter rests on exactly that code.
 create role svc_adapter nologin;
@@ -40,4 +47,4 @@ grant usage on schema api to svc_adapter;
 grant select on api.notes to svc_adapter;
 create policy svc_adapter_read on api.notes for select to svc_adapter using (true);
 
-grant web_anon, reader, svc_full, svc_adapter to authenticator;
+grant web_anon, reader, svc_full, svc_read, svc_adapter to authenticator;

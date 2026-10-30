@@ -20,6 +20,14 @@ test_valid_returns_claims (test_jwtcheck.JwtCheckTest) ... ok
 test_wrong_alg_rejected (test_jwtcheck.JwtCheckTest) ... ok
 test_wrong_audience_rejected (test_jwtcheck.JwtCheckTest) ... ok
 test_wrong_issuer_rejected (test_jwtcheck.JwtCheckTest) ... ok
+test_c3a_three_levels (test_outcome.OutcomeTest) ... ok
+test_c3b_other_users_canary (test_outcome.OutcomeTest) ... ok
+test_c4_c5_c6 (test_outcome.OutcomeTest) ... ok
+test_column_c_closed_by_design_and_did_not_run (test_outcome.OutcomeTest) ... ok
+test_control (test_outcome.OutcomeTest) ... ok
+test_poison_delivered_and_call_blocked_is_its_own_label (test_outcome.OutcomeTest) ... ok
+test_poison_delivered_and_call_through (test_outcome.OutcomeTest) ... ok
+test_poison_withheld_is_stopped_even_if_the_call_goes_through (test_outcome.OutcomeTest) ... ok
 test_honest_tools_list_passes (test_pin_processor.PinProcessorTest) ... ok
 test_non_list_method_passes (test_pin_processor.PinProcessorTest) ... ok
 test_pin_comes_from_policy_data (test_pin_processor.PinProcessorTest) ... ok
@@ -28,7 +36,10 @@ test_tampered_description_denied (test_pin_processor.PinProcessorTest) ... [pin]
 ok
 test_tampered_schema_denied (test_pin_processor.PinProcessorTest) ... [pin] DENY read_note: 79ab219d4179 != pin d1c4ac1e5c0e
 ok
-test_unpinned_tool_passes (test_pin_processor.PinProcessorTest) ... ok
+test_unparsable_list_denied (test_pin_processor.PinProcessorTest) ... ok
+test_unpinned_tool_denied (test_pin_processor.PinProcessorTest) ... [pin] DENY other: no pin
+[pin] DENY other: no pin
+ok
 test_answer_comes_from_data_api_not_upstream (test_typed_adapter.TypedAdapterTest) ... ok
 test_bad_arguments_refused (test_typed_adapter.TypedAdapterTest) ... ok
 test_data_api_error_is_an_error (test_typed_adapter.TypedAdapterTest) ... ok
@@ -38,6 +49,6 @@ test_query_is_scoped_to_caller (test_typed_adapter.TypedAdapterTest) ... ok
 test_unknown_tool_refused (test_typed_adapter.TypedAdapterTest) ... ok
 
 ----------------------------------------------------------------------
-Ran 33 tests in 0.754s
+Ran 42 tests in 0.708s
 
 OK

@@ -8,5 +8,7 @@
   },
   "python": "3.9.6",
   "cryptography": "44.0.2",
+  "grpcio": "1.80.0",
+  "protobuf": "6.33.6",
   "platform": "macOS-26.6.2-arm64-arm-64bit"
 }

@@ -1,6 +1,7 @@
 # Testbed infrastructure: IdP with token exchange, PostgreSQL with RLS, PostgREST in front of it.
 # The gateway, the MCP server, the decision service, the adapter and the two neighbour services run
 # on the host, started by harness/run_matrix.py. Images are pinned by digest. All secrets here are testbed-only.
+# Host ports come from run.sh (PORT_OFFSET); the defaults are the ones in the README.
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.4.2@sha256:3617b09bb4b7510a8d8d9b9fc5707399e2d70688dbcc2f8fb013a144829be1b9
@@ -10,7 +11,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: stand-only
     volumes:
       - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
-    ports: ["127.0.0.1:8080:8080"]
+    ports: ["127.0.0.1:${KC_PORT:-8080}:8080"]
 
   db:
     image: postgres:17-alpine@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b
@@ -18,7 +19,7 @@ services:
       POSTGRES_PASSWORD: stand-only
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    ports: ["127.0.0.1:5433:5432"]
+    ports: ["127.0.0.1:${DB_PORT:-5433}:5432"]
 
   postgrest:
     image: postgrest/postgrest:v12.2.12@sha256:5f4ce744539bbba786b4e24dbbd95bdb2a956dcf568c5374995a0ff4a68f5bd2
@@ -31,4 +32,4 @@ services:
       PGRST_JWT_ROLE_CLAIM_KEY: .role
       # Keycloak's JWKS, injected by run.sh once the IdP is up.
       PGRST_JWT_SECRET: ${KC_JWKS:-{}}
-    ports: ["127.0.0.1:3030:3000"]
+    ports: ["127.0.0.1:${PGRST_PORT:-3030}:3000"]

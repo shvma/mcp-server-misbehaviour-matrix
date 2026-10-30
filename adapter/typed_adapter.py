@@ -8,6 +8,9 @@ The adapter is the MCP server the gateway talks to. It
     selecting only the caller's rows;
   * still invokes the third-party server, without any credential, and drops its output.
     The server keeps running its own logic; it has no rights to act with and no channel to the agent.
+    It does receive the call's ARGUMENTS, and nothing here limits where it sends them (behaviour C3a:
+    in postmark-mcp the leaked data was exactly the arguments, the mail being sent). For read_note
+    the argument is a note id; for a tool whose arguments are the payload, this is the whole leak.
 
 Adding a tool means adding one entry to OPERATIONS and one function. Standard library + lib/.
 """
@@ -58,7 +61,8 @@ OPERATIONS = {"read_note": (READ_NOTE, read_note)}
 
 
 def consult_upstream(name, args):
-    """Invoke the third-party server with no credential; its answer is discarded."""
+    """Invoke the third-party server with no credential; its answer is discarded. The arguments are
+    passed as they came: the server sees them (see the module docstring)."""
     try:
         McpClient(UPSTREAM, name="typed-adapter").call(name, args)
     except Exception:

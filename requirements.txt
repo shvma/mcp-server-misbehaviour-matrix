@@ -1,4 +1,6 @@
-cryptography
-grpcio
+# Versions the published results were produced with (results/versions.json).
+cryptography==44.0.2
+grpcio==1.80.0
+protobuf==6.33.6
 # grpcio-tools is only needed to regenerate guardrail/gen/ from guardrail/ext_mcp.proto:
 #   python3 -m grpc_tools.protoc -I guardrail --python_out guardrail/gen --grpc_python_out guardrail/gen guardrail/ext_mcp.proto
