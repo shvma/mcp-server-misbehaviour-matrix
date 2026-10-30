@@ -45,10 +45,20 @@ class PinProcessorTest(unittest.TestCase):
         out = self.svc.CheckResponse(resp("tools/list", {"tools": [tampered]}), None)
         self.assertEqual(self.which(out), "error")
 
-    def test_unpinned_tool_passes(self):
-        # A tool with no pin is not this guardrail's concern (OPA blocks calling an unlisted tool).
-        out = self.svc.CheckResponse(resp("tools/list", {"tools": [{"name": "other", "description": "x"}]}), None)
-        self.assertEqual(self.which(out), "pass")
+    def test_unpinned_tool_denied(self):
+        # A tool with no pin is denied, not passed: OPA only stops calling it, while its description
+        # would already have reached the agent (behaviour C2 in the matrix).
+        extra = {"name": "other", "description": "x"}
+        for tools in ([extra], [TOOL, extra]):
+            out = self.svc.CheckResponse(resp("tools/list", {"tools": tools}), None)
+            self.assertEqual(self.which(out), "error", tools)
+            self.assertEqual(out.error.reason, "tool_not_pinned")
+
+    def test_unparsable_list_denied(self):
+        for raw in (b"{not json", b"[]", b'{"tools": "x"}', b'{"tools": ["read_note"]}'):
+            out = self.svc.CheckResponse(pb.McpResponse(method="tools/list", mcp_response=raw), None)
+            self.assertEqual(self.which(out), "error", raw)
+            self.assertEqual(out.error.reason, "unparsable_tools_list")
 
     def test_non_list_method_passes(self):
         out = self.svc.CheckResponse(resp("tools/call", {"content": []}), None)

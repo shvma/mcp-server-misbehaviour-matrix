@@ -1,0 +1,32 @@
+# Offline checks only: the live matrix (./run.sh) needs Docker, Keycloak and agentgateway and is not run here.
+name: ci
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Install OPA 1.21.2
+        run: |
+          curl -fsSL -o opa https://github.com/open-policy-agent/opa/releases/download/v1.21.2/opa_linux_amd64_static
+          curl -fsSL https://github.com/open-policy-agent/opa/releases/download/v1.21.2/opa_linux_amd64_static.sha256 | awk '{print $1"  opa"}' | sha256sum -c -
+          chmod +x opa
+      - name: opa fmt + opa test
+        run: |
+          ./opa fmt --list --fail policy
+          ./opa test policy -v
+      - name: unit tests
+        # tests/test_decision.py starts a real OPA server
+        run: OPA="$PWD/opa" python -m unittest discover -s tests -v
+      - name: README and results/*.md are rebuilt from results/raw.jsonl with no diff
+        run: |
+          python harness/build_matrix.py > /dev/null
+          git diff --exit-code README.md results/matrix.md results/cost.md

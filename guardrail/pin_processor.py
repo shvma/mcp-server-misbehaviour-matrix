@@ -3,7 +3,9 @@
 
 agentgateway (mcpGuardrails, phase=response) hands this gRPC server the tools/list result the
 AGENT is about to receive. We hash each listed tool and compare to the pin from policy/data.json.
-A mismatch denies the call (definition_changed). Because the check is on the agent's own response,
+A mismatch denies the call (definition_changed), and so does a listed tool that has no pin at all
+(tool_not_pinned): a server that adds a new tool must not get its description to the agent just
+because nobody pinned it. Because the check is on the agent's own response,
 there is no separate "checker" a server could serve something else to: a rug pull that changes the
 description reaches the pin on the same bytes the agent would get. failureMode is failClosed in the
 gateway, so if this server is down the call is denied too.
@@ -52,12 +54,17 @@ class Servicer(pbg.ExtMcpServicer):
             return pb.McpResponseResult(**{"pass": pb.Pass()})
         try:
             tools = json.loads(resp.mcp_response or b"{}").get("tools", [])
-        except ValueError:
+            if not isinstance(tools, list) or not all(isinstance(t, dict) for t in tools):
+                raise ValueError("tools is not a list of objects")
+        except (ValueError, AttributeError):
             return self._deny("unparsable_tools_list")
         for tool in tools:
             pin = self.pins.get(tool.get("name"))
             if pin is None:
-                continue  # not a pinned tool; calling it is blocked by OPA (tool_not_listed)
+                # Fail closed. OPA would refuse a *call* to this tool (tool_not_listed), but its
+                # description would already be in the agent's context: that is the poisoning.
+                sys.stderr.write(f"[pin] DENY {tool.get('name')}: no pin\n")
+                return self._deny("tool_not_pinned")
             served = definition_hash(tool)
             if served != pin:
                 sys.stderr.write(f"[pin] DENY {tool.get('name')}: {served[:12]} != pin {pin[:12]}\n")

@@ -2,13 +2,14 @@
 Used by billing and by the typed adapter; it sits on the trust path, so it stays minimal."""
 import base64
 import json
+import os
 import time
 import urllib.request
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
-ISSUER = "http://localhost:8080/realms/stand"
+ISSUER = os.environ.get("KC_URL", "http://localhost:8080") + "/realms/stand"
 JWKS_URL = ISSUER + "/protocol/openid-connect/certs"
 _keys = {}
 

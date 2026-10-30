@@ -1,28 +1,28 @@
 policy/admission_test.rego:95:
-data.mcp.admission_test.test_committed_data_pins_served_definition: PASS (1.732667ms)
+data.mcp.admission_test.test_committed_data_pins_served_definition: PASS (5.336375ms)
 policy/admission_test.rego:91:
-data.mcp.admission_test.test_empty_input_denied: PASS (5.27275ms)
+data.mcp.admission_test.test_empty_input_denied: PASS (5.409583ms)
 policy/admission_test.rego:27:
-data.mcp.admission_test.test_unlisted_tool_denied: PASS (5.367041ms)
-policy/admission_test.rego:60:
-data.mcp.admission_test.test_non_string_argument_denied: PASS (5.175542ms)
-policy/admission_test.rego:48:
-data.mcp.admission_test.test_argument_pattern_enforced: PASS (1.560333ms)
-policy/admission_test.rego:64:
-data.mcp.admission_test.test_unknown_argument_denied: PASS (5.572959ms)
-policy/admission_test.rego:73:
-data.mcp.admission_test.test_unknown_argument_false_denied: PASS (6.142542ms)
+data.mcp.admission_test.test_unlisted_tool_denied: PASS (6.691667ms)
 policy/admission_test.rego:54:
-data.mcp.admission_test.test_missing_argument_denied: PASS (6.202792ms)
-policy/admission_test.rego:39:
-data.mcp.admission_test.test_missing_agent_denied: PASS (5.995542ms)
-policy/admission_test.rego:23:
-data.mcp.admission_test.test_listed_call_allowed: PASS (6.32875ms)
+data.mcp.admission_test.test_missing_argument_denied: PASS (6.73625ms)
+policy/admission_test.rego:48:
+data.mcp.admission_test.test_argument_pattern_enforced: PASS (1.400584ms)
 policy/admission_test.rego:85:
-data.mcp.admission_test.test_unknown_constraint_kind_denied: PASS (6.086875ms)
+data.mcp.admission_test.test_unknown_constraint_kind_denied: PASS (6.738667ms)
+policy/admission_test.rego:23:
+data.mcp.admission_test.test_listed_call_allowed: PASS (6.78225ms)
+policy/admission_test.rego:73:
+data.mcp.admission_test.test_unknown_argument_false_denied: PASS (7.064625ms)
+policy/admission_test.rego:60:
+data.mcp.admission_test.test_non_string_argument_denied: PASS (7.094792ms)
+policy/admission_test.rego:64:
+data.mcp.admission_test.test_unknown_argument_denied: PASS (7.208708ms)
 policy/admission_test.rego:34:
-data.mcp.admission_test.test_other_agent_denied: PASS (6.448375ms)
+data.mcp.admission_test.test_other_agent_denied: PASS (7.285ms)
+policy/admission_test.rego:39:
+data.mcp.admission_test.test_missing_agent_denied: PASS (7.532459ms)
 policy/admission_test.rego:79:
-data.mcp.admission_test.test_unknown_argument_zero_denied: PASS (5.755667ms)
+data.mcp.admission_test.test_unknown_argument_zero_denied: PASS (7.836334ms)
 --------------------------------------------------------------------------------
 PASS: 13/13
